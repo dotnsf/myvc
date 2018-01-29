@@ -5,7 +5,7 @@
 //. $ ./createPeerAdmin.sh
 
 //. Run following command to deploy business network before running this app.js
-//. $ composer network deploy -a ./bcdev-basickit-network.bna -A admin -S adminpw -c PeerAdmin@hlfv1 -f admincard
+//. $ composer network deploy -a ./myvc-network.bna -A admin -S adminpw -c PeerAdmin@hlfv1 -f admincard
 
 var express = require( 'express' ),
     basicAuth = require( 'basic-auth-connect' ),
@@ -31,7 +31,7 @@ var port = 3001; /*appEnv.port || 3000*/;
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( bodyParser.json() );
 
-app.all( '/apidoc.html', basicAuth( function( user, pass ){
+app.all( '/doc/*', basicAuth( function( user, pass ){
   return ( user === settings.basic_username && pass === settings.basic_password );
 }));
 
@@ -64,8 +64,6 @@ apiRoutes.post( '/login', function( req, res ){
   client.getUserForLogin( id, user => {
     if( id && password && user.password == password ){
       var token = jwt.sign( user, app.get( 'superSecret' ), { expiresIn: '25h' } );
-      //console.log( 'token=' + token);
-
       res.write( JSON.stringify( { status: true, token: token }, 2, null ) );
       res.end();
     }else{
@@ -95,7 +93,6 @@ apiRoutes.post( '/adminuser', function( req, res ){
       res.write( JSON.stringify( { status: false, message: 'User ' + id + ' already existed.' }, 2, null ) );
       res.end();
     }, error => {
-      var dt = new Date();
       var user = { id: id, password: password, name: 'admin', role: 0 };
 
       client.createUserTx( user, result => {
@@ -151,6 +148,7 @@ apiRoutes.post( '/user', function( req, res ){
         var id = req.body.id;
         var password = req.body.password;
         var name = req.body.name;
+        var email = ( req.body.email ? req.body.email : [] );
         var role = req.body.role;
 
         client.getUser( id, user0 => {
@@ -159,6 +157,7 @@ apiRoutes.post( '/user', function( req, res ){
             id: id,
             password: ( password ? password : user0.password ),
             name: ( name ? name : user0.name ),
+            email: ( email ? email : user0.email ),
             role: ( role ? role : user0.role )
           };
           client.updateUserTx( user1, result => {
@@ -178,6 +177,7 @@ apiRoutes.post( '/user', function( req, res ){
               id: id,
               password: password,
               name: name,
+              email: email,
               role: role
             };
             client.createUserTx( user1, result => {
@@ -353,15 +353,19 @@ apiRoutes.post( '/item', function( req, res ){
         res.end();
       }else if( user && user.id ){
         var id = ( req.body.id ? req.body.id : uuid.v1() );
-        var user_id = user.id;
+        var name = ( req.body.name ? req.body.name : '' );
         var body = ( req.body.body ? req.body.body : '' );
+        var amount = ( req.body.amount ? ( typeof( req.body.amount ) == 'number' ? req.body.amount : parseInt( req.body.amount ) ) : 1 );
+        var owner = user;
 
         client.getItem( id, item0 => {
           //. 更新
           var item1 = {
             id: id,
-            user_id: user_id,
-            body: body
+            name: name,
+            body: body,
+            amount: amount,
+            owner: owner
           };
           client.updateItemTx( item1, result => {
             console.log( 'result(1)=' + JSON.stringify( result, 2, null ) );
@@ -378,8 +382,10 @@ apiRoutes.post( '/item', function( req, res ){
           if( id ){
             var item1 = {
               id: id,
-              user_id: user_id,
-              body: body
+              name: name,
+              body: body,
+              amount: amount,
+              owner: owner
             };
             client.createItemTx( item1, result => {
               console.log( 'result(0)=' + JSON.stringify( result, 2, null ) );
@@ -428,10 +434,10 @@ apiRoutes.get( '/items', function( req, res ){
             items = result;
             break;
           default:
-            //. 自分しか見れない
+            //. 自分のアイテムしか見れない
             var result0 = [];
             result.forEach( item0 => {
-              if( item0.user_id == user.id ){
+              if( item0.owner.id == user.id ){
                 result0.push( item0 );
               }
             });
@@ -479,7 +485,7 @@ apiRoutes.get( '/item', function( req, res ){
             break;
           default:
             //. 自分しか見れない
-            if( result.user_id[0] == user.id ){
+            if( result.owner.id == user.id ){
               res.write( JSON.stringify( result, 2, null ) );
               res.end();
             }else{
@@ -536,6 +542,51 @@ apiRoutes.delete( '/item', function( req, res ){
   }
 });
 
+apiRoutes.post( '/changeOwner', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var item_id = req.body.item_id;
+        if( !item_id ){
+          res.status( 404 );
+          res.write( JSON.stringify( { status: false, message: 'No item_id provided' }, 2, null ) );
+          res.end();
+        }else{
+          client.getItem( item_id, item => {
+            client.changeOwnerTx( item, user, result => {
+              res.write( JSON.stringify( { status: true }, 2, null ) );
+              res.end();
+            }, error => {
+              res.status( 404 );
+              res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+              res.end();
+            });
+          }, error => {
+            res.status( 404 );
+            res.write( JSON.stringify( { status: false, message: 'No item found with id = ' + item_id + '.' }, 2, null ) );
+            res.end();
+          });
+        }
+
+
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
 
 
 apiRoutes.get( '/userinfo', function( req, res ){
