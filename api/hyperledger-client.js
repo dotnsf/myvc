@@ -2,10 +2,8 @@
 
 //. Run following commands to create BNC(Business Network Card) for PeerAdmin
 //. $ cd /fabric
-//. $ ./createPeerAdmin.sh
+//. $ ./createPeerAdminCard.sh
 
-//. Run following command to deploy business network before running this app.js
-//. $ composer network deploy -a ./bcdev-basickit-network.bna -A admin -S adminpw -c PeerAdmin@hlfv1 -f admincard
 var settings = require( './settings' );
 
 const NS = 'me.juge.myvc.network';
@@ -163,6 +161,7 @@ const HyperledgerClient = function() {
       });
     }, rejected);
   };
+  
 
   vm.changeOwnerTx = (item, user, resolved, rejected) => {
     vm.prepare(() => {

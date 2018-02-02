@@ -542,7 +542,7 @@ apiRoutes.delete( '/item', function( req, res ){
   }
 });
 
-apiRoutes.post( '/changeOwner', function( req, res ){
+apiRoutes.post( '/trade', function( req, res ){
   res.contentType( 'application/json' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   if( !token ){

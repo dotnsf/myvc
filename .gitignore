@@ -1,0 +1,9 @@
+node_modules/
+package-lock.json
+settings.js.*
+admincard
+*.card
+
+composer-logs/
+
+viewer/public
