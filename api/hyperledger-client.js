@@ -161,7 +161,7 @@ const HyperledgerClient = function() {
       });
     }, rejected);
   };
-  
+
 
   vm.changeOwnerTx = (item, user, resolved, rejected) => {
     vm.prepare(() => {
@@ -214,8 +214,7 @@ const HyperledgerClient = function() {
       return vm.businessNetworkConnection.getParticipantRegistry(NS + '.User')
       .then(registry => {
         return registry.getAll();
-      })
-      .then(users0 => {
+      }).then(users0 => {
         var users = [];
         users0.forEach( function( element ){
           if( element.id && element.password && ( element.role || element.role === 0 ) ){

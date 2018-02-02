@@ -64,8 +64,17 @@ apiRoutes.post( '/login', function( req, res ){
   client.getUserForLogin( id, user => {
     if( id && password && user.password == password ){
       var token = jwt.sign( user, app.get( 'superSecret' ), { expiresIn: '25h' } );
-      res.write( JSON.stringify( { status: true, token: token }, 2, null ) );
-      res.end();
+
+      //. user.loggedin を更新する
+      user.loggedin = new Date();
+      client.updateUserTx( user, success => {
+        res.write( JSON.stringify( { status: true, token: token }, 2, null ) );
+        res.end();
+      }, error => {
+        console.log( error );
+        res.write( JSON.stringify( { status: true, token: token }, 2, null ) );
+        res.end();
+      });
     }else{
       res.status( 401 );
       res.write( JSON.stringify( { status: false, message: 'Not valid id/password.' }, 2, null ) );
@@ -224,14 +233,18 @@ apiRoutes.get( '/users', function( req, res ){
           switch( user.role ){
           case 0: //. admin
             //. 全ユーザーが見える
-            users = result;
+            var result0 = [];
+            result.forEach( user0 => {
+              result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+            });
+            users = result0;
             break;
           default:
             //. 自分しか見れない
             var result0 = [];
             result.forEach( user0 => {
               if( user0.id == user.id ){
-                result0.push( user0 );
+                result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
               }
             });
             users = result0;
