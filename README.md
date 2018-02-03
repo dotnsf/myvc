@@ -54,9 +54,11 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile myvc-network.bna --file PeerAdmin@hlfv1.card`
 
-- Create BNC for admin@myvc-network from Hyperledger Composer Playground, and import it
+- Create new BNC for admin@myvc-network, and import it
 
-    - `$ composer-playground`
+    - `$ composer card create`
+
+    - `$ composer card import --file admin@myvc-network`
 
 - Ping to Business Network with admin@myvc-network(for confirmation)
 
@@ -84,6 +86,11 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ node app`
 
+## Access to Swagger API Document
+
+- Browse this URL:
+
+    - http://servername:3001/doc/
 
 ## Licenging
 
