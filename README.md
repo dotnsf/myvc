@@ -82,6 +82,8 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ npm install`
 
+- (Optional)Edit public/doc/swagger.yaml host value for Swagger API Document, if needed.
+
 - Run app.js with Node.js
 
     - `$ node app`
