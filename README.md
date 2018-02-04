@@ -1,10 +1,10 @@
-# OreCoin
+# MyVC(Virtucal Coin)
 
 ## Overview
 
-Ore(my) Coin is one of virtual coin public implementations with Hyperledger Fabric and Hyperledger Composer.
+MyVC is one of virtual coin public implementations with Hyperledger Fabric and Hyperledger Composer.
 
-OreCoin supports simple CRUD API for User and Item, and Owner change API for Item also.
+MyVC supports simple CRUD API for User and Item, and Owner change API for Item also. This API would be run on port 3001(default).
 
 ## How to deploy business Network from API server.
 
@@ -42,7 +42,7 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ cp /tmp/PeerAdmin@hlfv1.card ./`
 
-- Import Business Network Card for PeerAdmin@hlfv1
+- Import Created Business Network Card for PeerAdmin@hlfv1
 
     - `$ composer card import --file PeerAdmin@hlfv1.card`
 
@@ -101,3 +101,5 @@ This code is licensed under MIT.
 ## Copyright
 
 2018 K.Kimura @ Juge.Me all rights reserved.
+
+
