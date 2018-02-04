@@ -106,12 +106,25 @@ const HyperledgerClient = function() {
       transaction.name = item.name;
       transaction.body = item.body;
       transaction.amount = item.amount;
-      transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
+      //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
+      transaction.owner = factory.newRelationship( NS, 'User', item.owner.id );
+
+      let serializer = vm.businessNetworkDefinition.getSerializer();
+      let resource = serializer.fromJSON({
+        '$class': NS + '.CreateItemTx',
+        'id': item.id,
+        'name': item.name,
+        'body': item.body,
+        'amount': item.amount,
+        'owner': item.owner.id
+      });
 
       //console.log( transaction );
 
       return vm.businessNetworkConnection.submitTransaction(transaction)
+      //return vm.businessNetworkConnection.submitTransaction(resource)
       .then(result => {
+console.log( result );
         //resolved(result);
         var result0 = {transactionId: transaction.transactionId, timestamp: transaction.timestamp};
         resolved(result0);
@@ -131,7 +144,8 @@ const HyperledgerClient = function() {
       transaction.name = item.name;
       transaction.body = item.body;
       transaction.amount = item.amount;
-      transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
+      //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
+      transaction.owner = factory.newRelationship( NS, 'User', item.owner.id ); //. "resource:me.juge.myvc.network.User#" + owner.id;
 
       //console.log( transaction );
 
@@ -167,8 +181,12 @@ const HyperledgerClient = function() {
     vm.prepare(() => {
       let factory = vm.businessNetworkDefinition.getFactory();
       let transaction = factory.newTransaction(NS, 'ChangeOwnerTx');
-      transaction.item = item; //. "resource:me.juge.myvc.network.Item#" + item.id;
-      transaction.user = user; //. "resource:me.juge.myvc.network.User#" + user.id;
+
+      //transaction.item = item; //. "resource:me.juge.myvc.network.Item#" + item.id;
+      //transaction.user = user; //. "resource:me.juge.myvc.network.User#" + user.id;
+      transaction.item = factory.newRelationship( NS, 'Item', item.id );
+      transaction.user = factory.newRelationship( NS, 'User', user.id );
+
       return vm.businessNetworkConnection.submitTransaction(transaction)
       .then(result => {
         resolved(result);

@@ -81,7 +81,7 @@ apiRoutes.post( '/login', function( req, res ){
       res.end();
     }
   }, error => {
-    console.log( 'getUser error: ' + JSON.stringify( error, 2, null ) );
+    console.log( 'getUserForLogin error: ' + JSON.stringify( error, 2, null ) );
     res.status( 401 );
     res.write( JSON.stringify( { status: false, message: 'Not valid id/password.' }, 2, null ) );
     res.end();
@@ -138,7 +138,7 @@ apiRoutes.use( function( req, res, next ){
 
 apiRoutes.post( '/user', function( req, res ){
   res.contentType( 'application/json' );
-  console.log( 'POST /user' );
+  //console.log( 'POST /user' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   if( !token ){
     res.status( 401 );

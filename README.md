@@ -58,7 +58,7 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ composer card create`
 
-    - `$ composer card import --file admin@myvc-network`
+    - `$ composer card import --file admin@myvc-network.card`
 
 - Ping to Business Network with admin@myvc-network(for confirmation)
 
