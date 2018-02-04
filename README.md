@@ -46,6 +46,12 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 
     - `$ composer card import --file PeerAdmin@hlfv1.card`
 
+- Import BNC for admin@myvc-network
+
+    - `$ cd **/myvc/api`
+
+    - `$ composer card import --file admin@myvc-network.card`
+
 - Install myvc-network runtime
 
     - `$ composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName myvc-network`
@@ -53,12 +59,6 @@ OreCoin supports simple CRUD API for User and Item, and Owner change API for Ite
 - Start myvc-network with BNA
 
     - `$ composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile myvc-network.bna --file PeerAdmin@hlfv1.card`
-
-- Create new BNC for admin@myvc-network, and import it
-
-    - `$ composer card create`
-
-    - `$ composer card import --file admin@myvc-network.card`
 
 - Ping to Business Network with admin@myvc-network(for confirmation)
 

@@ -257,7 +257,8 @@ console.log( result );
       }).then(message => {
         resolved(message);
       }).catch(error => {
-        resolved(null);
+        console.log('HyperLedgerClient.getItem(): reject');
+        rejected(null);
       });
     }, rejected);
   };
@@ -272,6 +273,7 @@ console.log( result );
         resolved(items);
       }).catch(error => {
         console.log('HyperLedgerClient.getAllItems(): reject');
+        console.log( error );
         rejected(error);
       });
     }, rejected);

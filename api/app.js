@@ -444,20 +444,25 @@ apiRoutes.get( '/items', function( req, res ){
           switch( user.role ){
           case 0: //. admin
             //. 全商品が見える
-            items = result;
+            var result0 = [];
+            result.forEach( item0 => {
+              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+            });
+            items = result0;
             break;
           default:
             //. 自分のアイテムしか見れない
             var result0 = [];
             result.forEach( item0 => {
               if( item0.owner.id == user.id ){
-                result0.push( item0 );
+                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
               }
             });
             items = result0;
             break;
           }
 
+          //console.log( items );
           res.write( JSON.stringify( items, 2, null ) );
           res.end();
         }, error => {
@@ -576,14 +581,33 @@ apiRoutes.post( '/trade', function( req, res ){
           res.end();
         }else{
           client.getItem( item_id, item => {
-            client.changeOwnerTx( item, user, result => {
-              res.write( JSON.stringify( { status: true }, 2, null ) );
+            if( item && item.owner ){
+              if( item.owner.id == user.id ){
+                var user_id = req.body.user_id;
+                client.getUser( user_id, new_owner => {
+                  client.changeOwnerTx( item, new_owner, result => {
+                    res.write( JSON.stringify( { status: true }, 2, null ) );
+                    res.end();
+                  }, error => {
+                    res.status( 404 );
+                    res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                    res.end();
+                  });
+                }, error => {
+                  res.status( 404 );
+                  res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                  res.end();
+                });
+              }else{
+                res.status( 404 );
+                res.write( JSON.stringify( { status: false, message: 'Invalid item_id.' }, 2, null ) );
+                res.end();
+              }
+            }else{
+              res.status( 401 );
+              res.write( JSON.stringify( { status: false, message: 'Invalid item_id.' }, 2, null ) );
               res.end();
-            }, error => {
-              res.status( 404 );
-              res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
-              res.end();
-            });
+            }
           }, error => {
             res.status( 404 );
             res.write( JSON.stringify( { status: false, message: 'No item found with id = ' + item_id + '.' }, 2, null ) );

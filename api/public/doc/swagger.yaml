@@ -98,7 +98,7 @@ paths:
         - name: body
           in: body
           schema:
-            $ref: '#/definitions/UserRequest'
+            $ref: '#/definitions/UserRequestToken'
       responses:
         '200':
           description: Success
@@ -117,7 +117,7 @@ paths:
         - name: body
           in: body
           schema:
-            $ref: '#/definitions/UserIdRequest'
+            $ref: '#/definitions/UserIdRequestToken'
       responses:
         '200':
           description: Success
@@ -185,7 +185,7 @@ paths:
         - name: body
           in: body
           schema:
-            $ref: '#/definitions/ItemRequest'
+            $ref: '#/definitions/ItemRequestToken'
       responses:
         '200':
           description: Success
@@ -285,7 +285,7 @@ definitions:
       email:
         type: array
         items:
-          $ref: '#/definitions/UserEmailRequest'
+          type: string
         description: User emails
       role:
         type: integer
@@ -305,7 +305,7 @@ definitions:
       email:
         type: array
         items:
-          $ref: '#/definitions/UserEmailRequest'
+          type: string
         description: User emails
       role:
         type: integer
@@ -353,9 +353,6 @@ definitions:
       amount:
         type: integer
         description: Item amount
-      user_id:
-        type: string
-        description: User ID for owner
   ItemRequestToken:
     type: object
     properties:
@@ -371,9 +368,6 @@ definitions:
       amount:
         type: integer
         description: Item amount
-      user_id:
-        type: string
-        description: User ID for owner
       token:
         type: string
         description: token which is retrieved from response of login API.
