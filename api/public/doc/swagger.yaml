@@ -147,6 +147,26 @@ paths:
           description: Access error
         '500':
           description: Server error
+  /api/queryUsers:
+    post:
+      tags:
+        - user
+      summary: Query users
+      description: Query multiple users information which can be retrieved from currrent token.
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          type: string
+          in: query
+          description: token which is retrieved from response of login API.
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
   /api/item:
     get:
       tags:
@@ -220,6 +240,26 @@ paths:
         - item
       summary: Get items
       description: Get multiple items information which can be retrieved from currrent token.
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          type: string
+          in: query
+          description: token which is retrieved from response of login API.
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+  /api/queryItems:
+    get:
+      tags:
+        - item
+      summary: Query items
+      description: Query multiple items information which can be retrieved from currrent token.
       produces:
         - application/json
       parameters:
