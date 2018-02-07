@@ -24,7 +24,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
         - find latest 6.x.x version, for example 6.12.3
 
-    - `$ sudo n 6.13.3`
+    - `$ sudo n 6.12.3`
 
     - `$ sudo apt-get purge nodejs npm`
 
