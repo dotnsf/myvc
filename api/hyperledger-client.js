@@ -124,7 +124,6 @@ const HyperledgerClient = function() {
       return vm.businessNetworkConnection.submitTransaction(transaction)
       //return vm.businessNetworkConnection.submitTransaction(resource)
       .then(result => {
-console.log( result );
         //resolved(result);
         var result0 = {transactionId: transaction.transactionId, timestamp: transaction.timestamp};
         resolved(result0);
@@ -248,6 +247,19 @@ console.log( result );
     }, rejected);
   };
 
+  //. Not sophisticated enough yet ..
+  vm.queryUsers = ( keyword, resolved, rejected ) => {
+    vm.getAllUsers((users0) => {
+      var users = [];
+      users0.forEach( function( user0 ){
+        if( user0.id.indexOf( keyword ) > -1 || user0.name.indexOf( keyword ) > -1 ){
+          users.push( user0 );
+        }
+      });
+      resolved(users);
+    }, rejected);
+  };
+
 
   vm.getItem = (id, resolved, rejected) => {
     vm.prepare(() => {
@@ -276,6 +288,19 @@ console.log( result );
         console.log( error );
         rejected(error);
       });
+    }, rejected);
+  };
+
+  //. Not sophisticated enough yet ..
+  vm.queryItems = ( keyword, resolved, rejected ) => {
+    vm.getAllItems((items0) => {
+      var items = [];
+      items0.forEach( function( item0 ){
+        if( item0.id.indexOf( keyword ) > -1 || item0.name.indexOf( keyword ) > -1 || item0.body.indexOf( keyword ) > -1 ){
+          items.push( item0 );
+        }
+      });
+      resolved(items);
     }, rejected);
   };
 }
