@@ -267,6 +267,60 @@ apiRoutes.get( '/users', function( req, res ){
   }
 });
 
+apiRoutes.post( '/queryUsers', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var keyword = req.body.keyword;
+        client.queryUsers( keyword, result => {
+          var users = [];
+          switch( user.role ){
+          case 0: //. admin
+            //. 全ユーザーが見える
+            var result0 = [];
+            result.forEach( user0 => {
+              result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+            });
+            users = result0;
+            break;
+          default:
+            //. 自分しか見れない
+            var result0 = [];
+            result.forEach( user0 => {
+              if( user0.id == user.id ){
+                result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+              }
+            });
+            users = result0;
+            break;
+          }
+
+          res.write( JSON.stringify( users, 2, null ) );
+          res.end();
+        }, error => {
+          res.status( 500 );
+          res.write( JSON.stringify( error, 2, null ) );
+          res.end();
+        });
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
+
 apiRoutes.get( '/user', function( req, res ){
   res.contentType( 'application/json' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -440,6 +494,61 @@ apiRoutes.get( '/items', function( req, res ){
         res.end();
       }else if( user && user.id ){
         client.getAllItems( result => {
+          var items = [];
+          switch( user.role ){
+          case 0: //. admin
+            //. 全商品が見える
+            var result0 = [];
+            result.forEach( item0 => {
+              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+            });
+            items = result0;
+            break;
+          default:
+            //. 自分のアイテムしか見れない
+            var result0 = [];
+            result.forEach( item0 => {
+              if( item0.owner.id == user.id ){
+                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+              }
+            });
+            items = result0;
+            break;
+          }
+
+          //console.log( items );
+          res.write( JSON.stringify( items, 2, null ) );
+          res.end();
+        }, error => {
+          res.status( 500 );
+          res.write( JSON.stringify( error, 2, null ) );
+          res.end();
+        });
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
+
+apiRoutes.post( '/queryItems', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var keyword = req.body.keyword;
+        client.queryItems( keyword, result => {
           var items = [];
           switch( user.role ){
           case 0: //. admin
