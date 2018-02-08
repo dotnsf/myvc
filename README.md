@@ -2,7 +2,7 @@
 
 ## Overview
 
-MyVC is one of virtual coin public implementations with Hyperledger Fabric and Hyperledger Composer.
+MyVC is one of virtual coin public implementations using Hyperledger Fabric and Hyperledger Composer.
 
 MyVC supports simple CRUD API for User and Item, and Owner change API for Item also. This API would be run on port 3001(default).
 
@@ -84,6 +84,16 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 - (Optional)Edit public/doc/swagger.yaml host value for Swagger API Document, if needed.
 
+- (Optional)Edit setttings.js, if needed.
+
+    - exports.cardName : Business Network Card name for Hyperledger Fabric access
+
+    - exports.superSecret : Seed string for encryption
+
+    - exports.basic_username : Username for Basic authentication
+
+    - exports.basic_password : Password for Basic authentication
+
 - Run app.js with Node.js
 
     - `$ node app`
@@ -93,6 +103,10 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 - Browse this URL:
 
     - http://servername:3001/doc/
+
+- Basic authentication:
+
+    - See api/settings.js : exports.basic_username and exports.basic_password
 
 ## How to initialize Platform, and how to test.
 
@@ -116,9 +130,11 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 10. Call ** POST /api/queryItems ** to search items with specified keyword and token.
 
-## Licenging
+## Licensing
 
 This code is licensed under MIT.
+
+https://gibhub.com/dotnsf/myvc/blob/master/MIT-LICENSE.txt
 
 ## Copyright
 
