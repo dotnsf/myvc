@@ -124,7 +124,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 7. Call ** POST /api/login ** to login with owner user of item, and get token
 
-8. Call ** POST /api/trade ** to change owner of item. This API must be called with original owners token from 7.
+8. Call ** POST /api/trade ** to change owner of item. This API must be called from original owner with token from 7.
 
 9. Call ** POST /api/queryUsers ** to search users with specified keyword and token.
 
