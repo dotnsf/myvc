@@ -110,25 +110,25 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 ## How to initialize Platform, and how to test.
 
-1. Call ** POST /api/adminuser ** to create admin user
+1. Call **POST /api/adminuser** to create admin user
 
-2. Call ** POST /api/login ** to login with admin user, and get token
+2. Call **POST /api/login** to login with admin user, and get token
 
-3. Call ** POST /api/user ** to create non-admin user. You need to specify token from 2.
+3. Call **POST /api/user** to create non-admin user. You need to specify token from 2.
 
-4. Call ** GET /api/users ** to view all users. You need to specify token from 2.
+4. Call **GET /api/users** to view all users. You need to specify token from 2.
 
-5. Call ** POST /api/item ** to create item. You need to specify token from 2.
+5. Call **POST /api/item** to create item. You need to specify token from 2.
 
-6. Call ** GET /api/items ** to view all items. You need to specify token from 2.
+6. Call **GET /api/items** to view all items. You need to specify token from 2.
 
-7. Call ** POST /api/login ** to login with owner user of item, and get token
+7. Call **POST /api/login** to login with owner user of item, and get token
 
-8. Call ** POST /api/trade ** to change owner of item. This API must be called from original owner with token from 7.
+8. Call **POST /api/trade** to change owner of item. This API must be called from original owner with token from 7.
 
-9. Call ** POST /api/queryUsers ** to search users with specified keyword and token.
+9. Call **POST /api/queryUsers** to search users with specified keyword and token.
 
-10. Call ** POST /api/queryItems ** to search items with specified keyword and token.
+10. Call **POST /api/queryItems** to search items with specified keyword and token.
 
 ## Licensing
 
