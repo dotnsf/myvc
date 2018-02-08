@@ -3,6 +3,5 @@ package-lock.json
 settings.js.*
 admincard
 *.card
-
 composer-logs/
 
