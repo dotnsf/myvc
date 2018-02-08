@@ -134,7 +134,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 This code is licensed under MIT.
 
-https://gibhub.com/dotnsf/myvc/blob/master/MIT-LICENSE.txt
+https://github.com/dotnsf/myvc/blob/master/MIT-LICENSE.txt
 
 ## Copyright
 
