@@ -254,6 +254,16 @@ const HyperledgerClient = function() {
       users0.forEach( function( user0 ){
         if( user0.id.indexOf( keyword ) > -1 || user0.name.indexOf( keyword ) > -1 ){
           users.push( user0 );
+        }else{
+          var b = false;
+          if( user0.email ){
+            for( var i = 0; !b && i < user0.email.length; i ++ ){
+              b = ( user0.email[i].indexOf( keyword ) > -1 );
+            }
+          }
+          if( b ){
+            users.push( user0 );
+          }
         }
       });
       resolved(users);

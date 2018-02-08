@@ -156,10 +156,10 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: token
-          type: string
-          in: query
-          description: token which is retrieved from response of login API.
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/QueryRequestToken'
       responses:
         '200':
           description: Success
@@ -263,10 +263,10 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: token
-          type: string
-          in: query
-          description: token which is retrieved from response of login API.
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/QueryRequestToken'
       responses:
         '200':
           description: Success
@@ -439,6 +439,15 @@ definitions:
       user_id:
         type: string
         description: User ID for new owner
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
+  QueryRequestToken:
+    type: object
+    properties:
+      keyword:
+        type: string
+        description: Query keyword
       token:
         type: string
         description: token which is retrieved from response of login API.
