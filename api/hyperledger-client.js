@@ -295,7 +295,6 @@ const HyperledgerClient = function() {
         resolved(items);
       }).catch(error => {
         console.log('HyperLedgerClient.getAllItems(): reject');
-        console.log( error );
         rejected(error);
       });
     }, rejected);

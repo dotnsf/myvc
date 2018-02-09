@@ -106,7 +106,9 @@ function getItems(){
         }
         var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
 <% if ( user.role == 0 ){ %>
-        tr += "<td><input type='button' value='Delete' onClick='deleteItem(\"" + item.id + "\")'/></td>";
+        tr += "<td><input type='button' value='Edit' onClick='editItem(" + JSON.stringify(item) + ")'/><input type='button' value='Delete' onClick='deleteItem(\"" + item.id + "\")'/></td>";
+<% }else{ %>
+        tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' value='Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
 <% } %>
         tr += "</tr>";
         $('#items_table_tbody').append( tr );
@@ -157,6 +159,31 @@ function deleteItem(id){
       type: 'DELETE',
       url: '/item',
       data: { id: id },
+      success: function( data ){
+        window.location.href = '/';
+      },
+      error: function(){
+        window.location.href = '/';
+      }
+    });
+  }
+}
+
+function editItem( item ){
+  $('#item_id').val( item.id );
+  $('#item_name').val( item.name );
+  $('#item_body').val( item.body );
+  $('#item_amount').val( item.amount );
+}
+
+function tradeItem( item ){
+  if( window.confirm( '<%= __('items.confirm.trade') %>' + item.id + ' ?' ) ){
+    var new_owner_id = $('#new_owner_id_for'+item.id).val();
+    console.log( item.id + ' -> ' + new_owner_id );
+    $.ajax({
+      type: 'POST',
+      url: '/trade',
+      data: { item_id: item.id, user_id: new_owner_id },
       success: function( data ){
         window.location.href = '/';
       },

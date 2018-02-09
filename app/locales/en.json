@@ -35,13 +35,11 @@
 	"items.table.id": "ID",
 	"items.table.body": "Body",
 	"items.table.action": "Action",
-	"nav.menu.lockers": "nav.menu.lockers",
-	"nav.menu.vips": "nav.menu.vips",
-	"nav.menu.orders": "nav.menu.orders",
-	"items.table.name": "items.table.name",
-	"items.table.amount": "items.table.amount",
-	"items.table.owner": "items.table.owner",
-	"items.table.modified": "items.table.modified",
-	"users.table.email": "users.table.email",
-	"users.table.created": "users.table.created"
+	"items.table.name": "Name",
+	"items.table.amount": "Amount",
+	"items.table.owner": "Owner",
+	"items.table.modified": "Modified",
+	"users.table.email": "Email",
+	"users.table.created": "Created",
+	"items.confirm.trade": "Trade Item: "
 }
