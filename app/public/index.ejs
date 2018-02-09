@@ -1,0 +1,222 @@
+<%- include('./header', {}) %>
+
+<title><%= __('index.head.title') %></title>
+<script>
+$(function(){
+<% if ( user.role == 0 ){ %>
+  getUsers();
+<% } %>
+  getItems();
+});
+
+function logout(){
+  $.ajax({
+    type: 'POST',
+    url: '/logout',
+    data: {},
+    success: function( data ){
+      window.location.href = '/';
+    },
+    error: function(){
+      window.location.href = '/';
+    }
+  });
+}
+
+function getUsers(){
+  $.ajax({
+    type: 'GET',
+    url: '/users',
+    success: function( users ){
+      //users = JSON.parse( users );
+      //console.log( users );
+      users.forEach( user => {
+        var tr = "<tr><td>" + user.id + "</td>********</td></td><td>" + user.name + "</td><td>" + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.crated + "</td>";
+        tr += "<td><input type='button' value='Delete' onClick='deleteUser(\"" + user.id + "\")'/></td>";
+        tr += "</tr>";
+        $('#users_table_tbody').append( tr );
+      });
+      var tr = "<tr>"
+        + "<td><input type='text' id='user_id' placeholder='id'/></td>"
+        + "<td><input type='password' id='user_password' placeholder='password'/></td>"
+        + "<td><input type='text' id='user_name' placeholder='name'/></td>"
+        + "<td><input type='text' id='user_email' placeholder='email'/></td>"
+        + "<td><input type='text' id='user_role' placeholder='role'/></td>"
+        + "<td><input type='text' id='user_created' placeholder='created'/></td>"
+        + "<td><input type='button' value='Add/Update User' onClick='addUser();'/></td>"
+        + "</tr>"
+      $('#users_table_tbody').append( tr );
+    },
+    error: function( err ){
+      console.log( err );
+    }
+  });
+}
+
+function addUser(){
+  var id = $('#user_id').val();
+  var password = $('#user_password').val();
+  var name = $('#user_name').val();
+  var email = $('#user_email').val();
+  var role = $('#user_role').val();
+
+  $.ajax({
+    type: 'POST',
+    url: '/user',
+    data: { id: id, password: password, name: name, email: email, role: role },
+    success: function( data ){
+      window.location.href = '/';
+    },
+    error: function(){
+      window.location.href = '/';
+    }
+  });
+}
+
+function deleteUser(id){
+  console.log( 'deleteUser(): id=' + id );
+
+  if( window.confirm( '<%= __('users.confirm.delete') %>' + id + ' ?' ) ){
+    $.ajax({
+      type: 'DELETE',
+      url: '/user',
+      data: { id: id },
+      success: function( data ){
+        window.location.href = '/';
+      },
+      error: function(){
+        window.location.href = '/';
+      }
+    });
+  }
+}
+
+
+function getItems(){
+  $.ajax({
+    type: 'GET',
+    url: '/items',
+    success: function( items ){
+      //items = JSON.parse( items );
+      //console.log( items );
+      items.forEach( item => {
+        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + item.owner.id + " (" + item.owner.name + ")</td><td>" + item.modified + "</td>";
+<% if ( user.role == 0 ){ %>
+        tr += "<td><input type='button' value='Delete' onClick='deleteItem(\"" + item.id + "\")'/></td>";
+<% } %>
+        tr += "</tr>";
+        $('#items_table_tbody').append( tr );
+      });
+<% if ( user.role == 0 ){ %>
+      var tr = "<tr>"
+      + "<td><input type='text' id='item_id' placeholder='id'/></td>"
+      + "<td><input type='text' id='item_name' placeholder='name'/></td>"
+      + "<td><input type='text' id='item_body' placeholder='body'/></td>"
+      + "<td><input type='text' id='item_amount' placeholder='amount'/></td>"
+      + "<td><!-- <input type='text' id='item_owner_id' placeholder='owner_id'/> --> - </td>"
+      + "<td><input type='button' value='Add Item' onClick='addItem();'/></td>"
+      + "</tr>"
+      $('#items_table_tbody').append( tr );
+<% } %>
+    },
+    error: function( err ){
+      console.log( err );
+    }
+  });
+}
+
+function addItem(){
+  var id = $('#item_id').val();
+  var name = $('#item_name').val();
+  var body = $('#item_body').val();
+  var amount = $('#item_amount').val();
+  var owner_id = $('#item_owner_id').val();
+
+  $.ajax({
+    type: 'POST',
+    url: '/item',
+    data: { id: id, name: name, body: body, amount: amount, owner_id: owner_id },
+    success: function( data ){
+      window.location.href = '/';
+    },
+    error: function(){
+      window.location.href = '/';
+    }
+  });
+}
+
+function deleteItem(id){
+  console.log( 'deleteItem(): id=' + id );
+
+  if( window.confirm( '<%= __('items.confirm.delete') %>' + id + ' ?' ) ){
+    $.ajax({
+      type: 'DELETE',
+      url: '/item',
+      data: { id: id },
+      success: function( data ){
+        window.location.href = '/';
+      },
+      error: function(){
+        window.location.href = '/';
+      }
+    });
+  }
+}
+</script>
+<style>
+html, body, {
+  background-color: #ddddff;
+  height: 100%;
+  margin: 0px;
+  padding: 0px
+}
+</style>
+</head>
+<body>
+
+<%- include('./nav', {}) %>
+
+<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+  <table class="table table-hover table-bordered" id="items_table">
+    <thead class="table-inverse">
+      <tr>
+        <tr><th bgcolor="#ddddff" colspan="<% if ( user.role == 0 ){ %>7<% }else{ %>6<% } %>"><%= __('items.table.title') %></th></tr>
+        <th><%= __('items.table.id') %></th>
+        <th><%= __('items.table.name') %></th>
+        <th><%= __('items.table.body') %></th>
+        <th><%= __('items.table.amount') %></th>
+        <th><%= __('items.table.owner') %></th>
+        <th><%= __('items.table.modified') %></th>
+        <% if ( user.role == 0 ){ %><th><%= __('items.table.action') %></th><% } %>
+      </tr>
+    </thead>
+    <tbody id="items_table_tbody">
+    </tbody>
+  </table>
+</div>
+
+<% if( user.role == 0 ){ %>
+<hr/>
+
+<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+  <table class="table table-hover table-bordered" id="users_table">
+    <thead class="table-inverse">
+      <tr>
+        <tr><th bgcolor="#ddddff" colspan="7"><%= __('users.table.title') %></th></tr>
+        <th><%= __('users.table.id') %></th>
+        <th><%= __('users.table.password') %></th>
+        <th><%= __('users.table.name') %></th>
+        <th><%= __('users.table.email') %></th>
+        <th><%= __('users.table.role') %></th>
+        <th><%= __('users.table.created') %></th>
+        <th><%= __('users.table.action') %></th>
+      </tr>
+    </thead>
+    <tbody id="users_table_tbody">
+    </tbody>
+  </table>
+</div>
+
+<% } %>
+
+<%- include('./footer', {}) %>
