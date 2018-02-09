@@ -98,11 +98,17 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
     - `$ node app`
 
+## Set admin Password
+
+- If this is your first time access after deployment of Business Network, you should set password for user "admin", as soon as possible:
+
+    - `$ curl -XPOST -H 'Content-Type: application/json' 'http://xx.xx.xx.xx:3001/api/adminuser' -d '{"password":"(password for admin)"}'`
+
 ## Access to Swagger API Document
 
 - Browse this URL:
 
-    - http://servername:3001/doc/
+    - http://xx.xx.xx.xx:3001/doc/
 
 - Basic authentication:
 

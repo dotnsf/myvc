@@ -508,6 +508,9 @@ apiRoutes.get( '/items', function( req, res ){
             //. 自分のアイテムしか見れない
             var result0 = [];
             result.forEach( item0 => {
+              //console.log( item0.owner );
+              //if( item0.owner.RelationShip['$identifier'] == user.id ){
+              //. 「自分のアイテム」をどうやって探す？ item0.owner.RelationShip を取得できる？
               if( item0.owner.id == user.id ){
                 result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
               }

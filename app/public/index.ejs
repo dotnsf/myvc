@@ -31,7 +31,7 @@ function getUsers(){
       //users = JSON.parse( users );
       //console.log( users );
       users.forEach( user => {
-        var tr = "<tr><td>" + user.id + "</td>********</td></td><td>" + user.name + "</td><td>" + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.crated + "</td>";
+        var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td>";
         tr += "<td><input type='button' value='Delete' onClick='deleteUser(\"" + user.id + "\")'/></td>";
         tr += "</tr>";
         $('#users_table_tbody').append( tr );
@@ -42,7 +42,7 @@ function getUsers(){
         + "<td><input type='text' id='user_name' placeholder='name'/></td>"
         + "<td><input type='text' id='user_email' placeholder='email'/></td>"
         + "<td><input type='text' id='user_role' placeholder='role'/></td>"
-        + "<td><input type='text' id='user_created' placeholder='created'/></td>"
+        + "<td><!-- <input type='text' id='user_created' placeholder='created'/> --> - </td>"
         + "<td><input type='button' value='Add/Update User' onClick='addUser();'/></td>"
         + "</tr>"
       $('#users_table_tbody').append( tr );
@@ -97,27 +97,31 @@ function getItems(){
     type: 'GET',
     url: '/items',
     success: function( items ){
-      //items = JSON.parse( items );
-      //console.log( items );
+      console.log( items );
       items.forEach( item => {
-        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + item.owner.id + " (" + item.owner.name + ")</td><td>" + item.modified + "</td>";
+        var owner_id = '';
+        var n = item.owner.indexOf( '#' );
+        if( n > -1 ){
+          owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
+        }
+        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
 <% if ( user.role == 0 ){ %>
         tr += "<td><input type='button' value='Delete' onClick='deleteItem(\"" + item.id + "\")'/></td>";
 <% } %>
         tr += "</tr>";
         $('#items_table_tbody').append( tr );
       });
-<% if ( user.role == 0 ){ %>
+
       var tr = "<tr>"
       + "<td><input type='text' id='item_id' placeholder='id'/></td>"
       + "<td><input type='text' id='item_name' placeholder='name'/></td>"
       + "<td><input type='text' id='item_body' placeholder='body'/></td>"
       + "<td><input type='text' id='item_amount' placeholder='amount'/></td>"
-      + "<td><!-- <input type='text' id='item_owner_id' placeholder='owner_id'/> --> - </td>"
+      + "<td><!-- <input type='text' id='item_owner_id' placeholder='owner_id'/> --> (me) </td>"
+      + "<td><!-- <input type='text' id='item_modified' placeholder='modified'/> --> - </td>"
       + "<td><input type='button' value='Add Item' onClick='addItem();'/></td>"
       + "</tr>"
       $('#items_table_tbody').append( tr );
-<% } %>
     },
     error: function( err ){
       console.log( err );
@@ -180,14 +184,14 @@ html, body, {
   <table class="table table-hover table-bordered" id="items_table">
     <thead class="table-inverse">
       <tr>
-        <tr><th bgcolor="#ddddff" colspan="<% if ( user.role == 0 ){ %>7<% }else{ %>6<% } %>"><%= __('items.table.title') %></th></tr>
+        <tr><th bgcolor="#ddddff" colspan="7"><%= __('items.table.title') %></th></tr>
         <th><%= __('items.table.id') %></th>
         <th><%= __('items.table.name') %></th>
         <th><%= __('items.table.body') %></th>
         <th><%= __('items.table.amount') %></th>
         <th><%= __('items.table.owner') %></th>
         <th><%= __('items.table.modified') %></th>
-        <% if ( user.role == 0 ){ %><th><%= __('items.table.action') %></th><% } %>
+        <th><%= __('items.table.action') %></th>
       </tr>
     </thead>
     <tbody id="items_table_tbody">
