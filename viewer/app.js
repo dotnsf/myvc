@@ -41,7 +41,6 @@ app.get( '/transactions', function( req, res ){
       res.write( JSON.stringify( err1, 2, null ) );
       res.end();
     }else{
-      //console.log( body1 );
       res.write( JSON.stringify( body1, 2, null ) );
       res.end();
     }
