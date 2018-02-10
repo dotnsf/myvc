@@ -317,6 +317,7 @@ app.post( '/trade', function( req, res ){
   var json1 = { token: token };
   if( req.body.item_id ){ json1['item_id'] = req.body.item_id; }
   if( req.body.user_id ){ json1['user_id'] = req.body.user_id; }
+console.log( json1 );
   var options1 = {
     url: settings.api_url + '/trade',
     method: 'POST',

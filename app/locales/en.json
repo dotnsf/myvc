@@ -41,5 +41,6 @@
 	"items.table.modified": "Modified",
 	"users.table.email": "Email",
 	"users.table.created": "Created",
-	"items.confirm.trade": "Trade Item: "
+	"items.confirm.trade": "Trade Item: ",
+	"nav.menu.orders": "nav.menu.orders"
 }

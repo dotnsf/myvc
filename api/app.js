@@ -703,6 +703,7 @@ apiRoutes.post( '/trade', function( req, res ){
                     res.end();
                   });
                 }, error => {
+console.log( error );
                   res.status( 404 );
                   res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
                   res.end();

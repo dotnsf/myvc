@@ -178,8 +178,7 @@ function editItem( item ){
 
 function tradeItem( item ){
   if( window.confirm( '<%= __('items.confirm.trade') %>' + item.id + ' ?' ) ){
-    var new_owner_id = $('#new_owner_id_for'+item.id).val();
-    console.log( item.id + ' -> ' + new_owner_id );
+    var new_owner_id = $('#new_owner_id_for_'+item.id).val();
     $.ajax({
       type: 'POST',
       url: '/trade',
