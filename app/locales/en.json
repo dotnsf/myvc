@@ -6,6 +6,7 @@
 	"login.login": "Log in",
 	"nav.brandtitle": "MyVC",
 	"nav.menu.logout": "Log out",
+	"nav.menu.sourcecode": "Source",
 	"users.head.title": "Users",
 	"users.buttonlabel.edit": "Edit",
 	"users.buttonlabel.delete": "Delete",
