@@ -312,6 +312,56 @@ const HyperledgerClient = function() {
       resolved(items);
     }, rejected);
   };
+
+
+  //. Transaction Registries
+  vm.getTransactionRegistries = ( resolved, rejected ) => {
+    vm.prepare(() => {
+      return vm.businessNetworkConnection.getAllTransactionRegistries()
+      .then(registries => {
+        resolved(registries);
+      }).catch(error => {
+        console.log('HyperLedgerClient.getTransactionRegistries(): reject');
+        console.log( error );
+        rejected(error);
+      });
+    }, rejected);
+  };
+
+  //. All Transactions
+  vm.getAllTransactions = ( transactionRegistry, resolved, rejected ) => {
+    vm.prepare(() => {
+      return transactionRegistry.getAll()
+      .then(transactions0 => {
+        var transactions = [];
+        transactions0.forEach( function( transaction0 ){
+          transactions.push( { transactionId: transaction0.transactionId, timestamp: transaction0.timestamp /*, item: transaction0.item */, namespace: transaction0['$namespace'], type: transaction0['$type'] } );
+        });
+        resolved( transactions );
+      }).catch(error => {
+        console.log('HyperLedgerClient.getAllTransactions(): reject');
+        console.log( error );
+        rejected(error);
+      });
+    }, rejected);
+  };
+
+  //. Transaction detail
+  vm.getTransaction = ( type, transactionId, resolved, rejected ) => {
+    vm.prepare(() => {
+      return vm.businessNetworkConnection.getTransactionRegistry(NS + '.' + type)
+      .then(registry => {
+        return registry.get(transactionId);
+      }).then(transaction => {
+        var serializer = vm.businessNetworkDefinition.getSerializer();
+        resolved( serializer.toJSON( transaction ) );
+      }).catch(error => {
+        console.log('HyperLedgerClient.getTransaction(): reject');
+        console.log( error );
+        rejected(error);
+      });
+    }, rejected);
+  };
 }
 
 module.exports = HyperledgerClient;

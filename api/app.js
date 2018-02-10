@@ -46,6 +46,8 @@ var apiRoutes = express.Router();
 
 apiRoutes.get( '/test', function( req, res ){
   res.contentType( 'application/json' );
+
+  /* get User information from id */
   var id = req.query.id;
   client.getUserForLogin( id, user => {
     res.write( JSON.stringify( { status: true, message: user }, 2, null ) );
@@ -56,6 +58,62 @@ apiRoutes.get( '/test', function( req, res ){
     res.end();
   });
 });
+
+
+/* Secret API */
+apiRoutes.get( '/transactions', function( req, res ){
+  res.contentType( 'application/json' );
+  client.getTransactionRegistries( registries => {
+    var messages = [];
+    var idx = 0;
+    for( var i = 0; i < registries.length; i ++ ){
+      var registry = registries[i];
+      client.getAllTransactions( registry, transactions => {
+        transactions.forEach( transaction => {
+          //messages.push( transaction );
+          var m = 0;
+          var b = true;
+          for( m = 0; b && m < messages.length; m ++ ){
+            if( messages[m].timestamp > transaction.timestamp ){
+              b = false;
+            }
+          }
+          messages.splice( m, 0, transaction );
+        });
+        idx ++;
+        if( idx >= registries.length ){
+          res.write( JSON.stringify( { status: true, messages: messages }, 2, null ) );
+          res.end();
+        }
+      }, error => {
+        idx ++;
+        if( idx >= registries.length ){
+          res.write( JSON.stringify( { status: true, messages: messages }, 2, null ) );
+          res.end();
+        }
+      });
+    }
+  }, error => {
+    res.status( 401 );
+    res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+    res.end();
+  });
+});
+
+apiRoutes.get( '/transaction', function( req, res ){
+  res.contentType( 'application/json' );
+  var type = req.query.type;
+  var transactionId = req.query.transactionId;
+  client.getTransaction( type, transactionId, transaction => {
+    res.write( JSON.stringify( { status: true, transaction: transaction }, 2, null ) );
+    res.end();
+  }, error => {
+    res.status( 401 );
+    res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+    res.end();
+  });
+});
+
 
 apiRoutes.post( '/login', function( req, res ){
   res.contentType( 'application/json' );
