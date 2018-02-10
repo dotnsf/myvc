@@ -15,10 +15,11 @@ function getTransactions(){
   $.ajax({
     type: 'GET',
     url: '/transactions',
-    success: function( transactions ){
-      transactions = JSON.parse( transactions );
-      console.log( transactions );
-      transactions.messages.forEach( transaction => {
+    success: function( result ){
+//      console.log( result );
+      result = JSON.parse( result );
+      console.log( result );
+      result.transactions.forEach( transaction => {
         var tr = "<tr><td>" + transaction.transactionId + "</td><td>" + transaction.type + "</td><td>" + transaction.timestamp + "</td></tr>";
         $('#transactions_table_tbody').append( tr );
       });
@@ -36,7 +37,7 @@ function getTransaction( transactionId, type ){
 </head>
 <body>
 
-<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+<div class="container" style="padding:20px 0; font-size:8px;">
   <table class="table table-hover table-bordered" id="transactions_table">
     <thead class="table-inverse">
       <tr><th bgcolor="#ddddff" colspan="7">Transactions</th></tr>

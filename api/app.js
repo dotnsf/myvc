@@ -82,13 +82,13 @@ apiRoutes.get( '/transactions', function( req, res ){
         });
         idx ++;
         if( idx >= registries.length ){
-          res.write( JSON.stringify( { status: true, messages: messages }, 2, null ) );
+          res.write( JSON.stringify( { status: true, transactions: messages }, 2, null ) );
           res.end();
         }
       }, error => {
         idx ++;
         if( idx >= registries.length ){
-          res.write( JSON.stringify( { status: true, messages: messages }, 2, null ) );
+          res.write( JSON.stringify( { status: true, transactions: messages }, 2, null ) );
           res.end();
         }
       });

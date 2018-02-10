@@ -26,6 +26,7 @@ app.get( '/', function( req, res ){
 });
 
 app.get( '/transactions', function( req, res ){
+  res.contentType( 'application/json' );
   var options1 = {
     url: settings.api_url + '/transactions',
     method: 'GET',
@@ -48,6 +49,7 @@ app.get( '/transactions', function( req, res ){
 });
 
 app.get( '/transaction', function( req, res ){
+  res.contentType( 'application/json' );
   var transactionId = req.query.transactionId;
   var type = req.query.type;
   var options1 = {
