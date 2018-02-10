@@ -32,18 +32,18 @@ function getUsers(){
       //console.log( users );
       users.forEach( user => {
         var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td>";
-        tr += "<td><input type='button' value='Delete' onClick='deleteUser(\"" + user.id + "\")'/></td>";
+        tr += "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.delete') %>' onClick='deleteUser(\"" + user.id + "\")'/></td>";
         tr += "</tr>";
         $('#users_table_tbody').append( tr );
       });
       var tr = "<tr>"
-        + "<td><input type='text' id='user_id' placeholder='id'/></td>"
-        + "<td><input type='password' id='user_password' placeholder='password'/></td>"
-        + "<td><input type='text' id='user_name' placeholder='name'/></td>"
-        + "<td><input type='text' id='user_email' placeholder='email'/></td>"
-        + "<td><input type='text' id='user_role' placeholder='role'/></td>"
-        + "<td><!-- <input type='text' id='user_created' placeholder='created'/> --> - </td>"
-        + "<td><input type='button' value='Add/Update User' onClick='addUser();'/></td>"
+        + "<td><input type='text' id='user_id' placeholder='<%= __('users.placeholder.id') %>'/></td>"
+        + "<td><input type='password' id='user_password' placeholder='<%= __('users.placeholder.password') %>'/></td>"
+        + "<td><input type='text' id='user_name' placeholder='<%= __('users.placeholder.name') %>'/></td>"
+        + "<td><input type='text' id='user_email' placeholder='<%= __('users.placeholder.email') %>'/></td>"
+        + "<td><input type='text' id='user_role' placeholder='<%= __('users.placeholder.role') %>'/></td>"
+        + "<td><!-- <input type='text' id='user_created' placeholder='<%= __('users.placeholder.created') %>'/> --> - </td>"
+        + "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.add') %>' onClick='addUser();'/></td>"
         + "</tr>"
       $('#users_table_tbody').append( tr );
     },
@@ -106,22 +106,22 @@ function getItems(){
         }
         var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
 <% if ( user.role == 0 ){ %>
-        tr += "<td><input type='button' value='Edit' onClick='editItem(" + JSON.stringify(item) + ")'/><input type='button' value='Delete' onClick='deleteItem(\"" + item.id + "\")'/></td>";
+        tr += "<td><input type='button' class='btn btn-default' value='Edit' onClick='editItem(" + JSON.stringify(item) + ")'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.delete') %>' onClick='deleteItem(\"" + item.id + "\")'/></td>";
 <% }else{ %>
-        tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' value='Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
+        tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
 <% } %>
         tr += "</tr>";
         $('#items_table_tbody').append( tr );
       });
 
       var tr = "<tr>"
-      + "<td><input type='text' id='item_id' placeholder='id'/></td>"
-      + "<td><input type='text' id='item_name' placeholder='name'/></td>"
-      + "<td><input type='text' id='item_body' placeholder='body'/></td>"
-      + "<td><input type='text' id='item_amount' placeholder='amount'/></td>"
-      + "<td><!-- <input type='text' id='item_owner_id' placeholder='owner_id'/> --> (me) </td>"
-      + "<td><!-- <input type='text' id='item_modified' placeholder='modified'/> --> - </td>"
-      + "<td><input type='button' value='Add Item' onClick='addItem();'/></td>"
+      + "<td><input type='text' id='item_id' placeholder='<%= __('items.placeholder.id') %>'/></td>"
+      + "<td><input type='text' id='item_name' placeholder='<%= __('items.placeholder.name') %>'/></td>"
+      + "<td><input type='text' id='item_body' placeholder='<%= __('items.placeholder.body') %>'/></td>"
+      + "<td><input type='text' id='item_amount' placeholder='<%= __('items.placeholder.amount') %>'/></td>"
+      + "<td><!-- <input type='text' id='item_owner_id' placeholder='<%= __('items.placeholder.owner_id') %>'/> --> - </td>"
+      + "<td><!-- <input type='text' id='item_modified' placeholder='<%= __('items.placeholder.modified') %>'/> --> - </td>"
+      + "<td><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.add') %>' onClick='addItem();'/></td>"
       + "</tr>"
       $('#items_table_tbody').append( tr );
     },
