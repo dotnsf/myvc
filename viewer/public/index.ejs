@@ -15,21 +15,31 @@ function getTransactions(){
     url: '/transactions',
     success: function( result ){
       result = JSON.parse( result );
-      //console.log( result );
-      result.transactions.forEach( transaction => {
-        var tr = "<tr data-transactionId='" + transaction.transactionId + "' data-type='" + transaction.type + "'><td>" + transaction.transactionId + "</td><td>" + transaction.type + "</td><td>" + transaction.timestamp + "</td></tr>";
-        $('#transactions_table_tbody').append( tr );
-      });
+      for( var i = 0; i < result.transactions.length; i ++ ){
+        var transaction = result.transactions[i];
 
-      $('tbody tr[data-transactionId]').click( function(){
-        var id = $(this).attr( 'data-transactionId' );
-        var type = $(this).attr( 'data-type' );
+        //. Add Indicator
+        var li = "<li data-target='#carousel-example-generic' data-slide-to='" + i + "' id='indicator-for-" + transaction.transactionId + "'></li>";
+        $('#carousel-indicators').append( li );
 
-        var inserted = $(this).attr( 'data-inserted' );
-        if( !inserted ){
-          getTransaction( id, type );
+        //. Add Inner
+        var div = "<div class='item' id='item-for-" + transaction.transactionId + "'>"
+          + "<div style='background:#333; color:#fff'>"
+          + "<div><pre id='pre-for-" + transaction.transactionId + "'>" + JSON.stringify( transaction, null, 2 ) + "</pre></div>"
+          + "</div>"
+          + "<div class='carousel-caption'>"
+          + transaction.transactionId + " (" + transaction.timestamp + ")"
+          + "</div>"
+          + "</div>";
+        $('#carousel-inner').append( div );
+
+        if( i == result.transactions.length - 1 ){
+          $('#indicator-for-' + transaction.transactionId).addClass( 'active' );
+          $('#item-for-' + transaction.transactionId).addClass( 'active' );
         }
-      });
+
+        getTransaction( transaction.transactionId, transaction.type );
+      }
     },
     error: function( err ){
       console.log( err );
@@ -43,19 +53,12 @@ function getTransaction( transactionId, type ){
     url: '/transaction?transactionId=' + transactionId + '&type=' + type,
     success: function( result ){
       result = JSON.parse( result );
-      //console.log( result );
-      var $row = $('tbody tr[data-transactionId=' + transactionId + ']' );
-      $row.attr( 'data-inserted', 1 );
 
       var transaction = result.transaction;
       delete transaction['$class'];
-      delete transaction['transactionId'];
-      delete transaction['type'];
-      delete transaction['timestamp'];
-      var json = JSON.stringify( transaction );
-      $row.attr( 'title', json );
+      var json = JSON.stringify( transaction, null, 2 );
 
-      //. json の内容を toast 表示したい
+      $('#pre-for-' + transaction.transactionId).html( json );
     },
     error: function( err ){
       console.log( err );
@@ -75,20 +78,26 @@ tr:hover{
 </head>
 <body>
 
-<div class="container" style="padding:20px 0; font-size:8px;">
-  <table class="table table-hover table-bordered" id="transactions_table">
-    <thead class="table-inverse">
-      <tr><th bgcolor="#ddddff" colspan="3">Transactions</th></tr>
-      <tr>
-        <th class="col-xs8">ID</th>
-        <th class="col-xs2">Type</th>
-        <th class="col-xs2">Timestamp</th>
-      </tr>
-    </thead>
-    <tbody id="transactions_table_tbody">
-    </tbody>
-  </table>
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators" id="carousel-indicators">
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox" id="carousel-inner">
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
 </div>
+
 </body>
 </html>
 
