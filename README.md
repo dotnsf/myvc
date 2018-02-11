@@ -100,7 +100,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 ## Set admin Password
 
-- If this is your first time access after deployment of Business Network, you should set password for user "admin", as soon as possible:
+- If this is your first time access after deployment of Business Network, you should set password for user "admin", who is privileaged user with role 0, as soon as possible:
 
     - `$ curl -XPOST -H 'Content-Type: application/json' 'http://xx.xx.xx.xx:3001/api/adminuser' -d '{"password":"(password for admin)"}'`
 
