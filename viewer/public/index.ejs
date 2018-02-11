@@ -4,8 +4,6 @@
 <script type="text/javascript" src="//code.jquery.com/jquery-2.0.3.min.js"></script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link href="//gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
-<script src="//gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 $(function(){
   getTransactions();
@@ -21,9 +19,6 @@ function getTransactions(){
       result.transactions.forEach( transaction => {
         var tr = "<tr data-transactionId='" + transaction.transactionId + "' data-type='" + transaction.type + "'><td>" + transaction.transactionId + "</td><td>" + transaction.type + "</td><td>" + transaction.timestamp + "</td></tr>";
         $('#transactions_table_tbody').append( tr );
-
-//        var tr2 = "<tr transactionId='" + transaction.transactionId + "' style='display:none;'><td colspan='3'></td></tr>";
-//        $('#transactions_table_tbody').append( tr2 );
       });
 
       $('tbody tr[data-transactionId]').click( function(){
@@ -34,15 +29,6 @@ function getTransactions(){
         if( !inserted ){
           getTransaction( id, type );
         }
-
-/*
-        var display = $('tr[transactionId=' + id + ']').css( 'display' );
-        if( display == 'none' ){
-          display = $('tr[transactionId=' + id + ']').css( 'display', 'block' );
-        }else{
-          display = $('tr[transactionId=' + id + ']').css( 'display', 'none' );
-        }
-*/
       });
     },
     error: function( err ){
@@ -66,8 +52,6 @@ function getTransaction( transactionId, type ){
       delete transaction['transactionId'];
       delete transaction['type'];
       delete transaction['timestamp'];
-      //$('tr[transactionId=' + transactionId + '] td').attr( "colspan", "3" );
-      //$('tr[transactionId=' + transactionId + '] td').html( JSON.stringify( transaction ) );
       var json = JSON.stringify( transaction );
       $row.attr( 'title', json );
 
