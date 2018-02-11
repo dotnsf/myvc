@@ -70,24 +70,21 @@ apiRoutes.get( '/transactions', function( req, res ){
       var registry = registries[i];
       client.getAllTransactions( registry, transactions => {
         transactions.forEach( transaction => {
-          //messages.push( transaction );
-          var m = 0;
-          var b = true;
-          for( m = 0; b && m < messages.length; m ++ ){
-            if( messages[m].timestamp > transaction.timestamp ){
-              b = false;
-            }
-          }
-          messages.splice( m, 0, transaction );
+          messages.push( transaction );
         });
+
         idx ++;
         if( idx >= registries.length ){
+          //. sort by timestamp
+          messages.sort( compare );
           res.write( JSON.stringify( { status: true, transactions: messages }, 2, null ) );
           res.end();
         }
       }, error => {
         idx ++;
         if( idx >= registries.length ){
+          //. sort by timestamp
+          messages.sort( compare );
           res.write( JSON.stringify( { status: true, transactions: messages }, 2, null ) );
           res.end();
         }
@@ -826,3 +823,20 @@ app.use( '/api', apiRoutes );
 
 app.listen( port );
 console.log( "server starting on " + port + " ..." );
+
+
+//. compare transaction by timestamp
+function compare( a, b ){
+  const tA = a.timestamp.getTime();
+  const tB = b.timestamp.getTime();
+
+  var comparison = 0;
+  if( tA > tB ){
+    comparison = 1;
+  }else if( tA < tB ){
+    comparison = -1;
+  }
+
+  return comparison;
+}
+
