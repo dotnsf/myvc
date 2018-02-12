@@ -136,6 +136,37 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 10. Call **POST /api/queryItems** to search items with specified keyword and token.
 
+
+## How to setup sample web application under app/
+
+- Prepare for folowing composer commands
+
+    - `$ cd **/myvc/app`
+
+- Install dependencies
+
+    - `$ npm install`
+
+- (Optional)Edit setttings.js, if needed.
+
+    - exports.api_url : URL for above API Platform
+
+    - exports.superSecret : Seed string for encryption( this has to be same value with the ones of API)
+
+    - exports.basic_username : Username for Basic authentication
+
+    - exports.basic_password : Password for Basic authentication
+
+- Run app.js with Node.js
+
+    - `$ node app`
+
+
+## How to setup sample web application under viewer/
+
+- Underconstruction
+
+
 ## Licensing
 
 This code is licensed under MIT.
