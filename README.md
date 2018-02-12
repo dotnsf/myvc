@@ -34,7 +34,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 - (Once)Prepare Hyperledger Fabric v1.
 
-    - http://blog.idcf.jp/entry/hyperledger-fabric
+    - http://dotnsf.blog.jp/archives/1069641731.html
 
 - (Once)Create BNC(Business Network Card) for PeerAdmin@hlfv1
 
