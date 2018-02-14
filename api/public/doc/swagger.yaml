@@ -427,6 +427,9 @@ definitions:
       name:
         type: string
         description: Item name
+      type:
+        type: string
+        description: Item type
       body:
         type: string
         description: Item body
@@ -442,6 +445,9 @@ definitions:
       name:
         type: string
         description: Item name
+      type:
+        type: string
+        description: Item type
       body:
         type: string
         description: Item body

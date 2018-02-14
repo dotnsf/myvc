@@ -26,7 +26,15 @@ const HyperledgerClient = function() {
         vm.businessNetworkDefinition = result;
 
         //. Events Subscription
-        vm.businessNetworkConnection.on( 'event', ( event ) => {
+        vm.businessNetworkConnection.on( 'event', ( evt ) => {
+          var event = {
+            type: evt['$type'],
+            eventId: evt.eventId,
+            timestamp: evt.timestamp,
+            id: evt.id,
+            name: evt.name,
+            body: evt.body
+          };
           //. event: { '$class': '***', 'eventId': 'xxxx-xxxx-xxxx-xxxxxx#x' }
           console.log( event );
         });
