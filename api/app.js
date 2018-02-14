@@ -646,7 +646,7 @@ apiRoutes.post( '/queryItems', function( req, res ){
   }
 });
 
-apiRoutes.post( '/itemsByType', function( req, res ){
+apiRoutes.post( '/itemsByAttr', function( req, res ){
   res.contentType( 'application/json' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   if( !token ){

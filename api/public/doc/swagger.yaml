@@ -254,7 +254,7 @@ paths:
           description: Access error
         '500':
           description: Server error
-  /api/itemsByType:
+  /api/itemsByAttr:
     post:
       tags:
         - item
@@ -266,7 +266,7 @@ paths:
         - name: body
           in: body
           schema:
-            $ref: '#/definitions/QueryItemsByTypeRequestToken'
+            $ref: '#/definitions/QueryItemsByAttrRequestToken'
       responses:
         '200':
           description: Success
@@ -535,7 +535,7 @@ definitions:
       token:
         type: string
         description: token which is retrieved from response of login API.
-  QueryItemsByTypeRequestToken:
+  QueryItemsByAttrRequestToken:
     type: object
     properties:
       type:
