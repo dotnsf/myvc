@@ -55,6 +55,7 @@ const HyperledgerClient = function() {
       transaction.id = user.id;
       transaction.password = user.password;
       transaction.name = user.name;
+      if( user.type ){ transaction.type = user.type; }
       transaction.email = ( user.email ? user.email : [] );
       transaction.role = user.role;
 
@@ -77,6 +78,7 @@ const HyperledgerClient = function() {
       transaction.id = user.id;
       transaction.password = user.password;
       transaction.name = user.name;
+      transaction.type = user.type;
       transaction.email = user.email;
       transaction.role = user.role;
 
@@ -119,7 +121,6 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
-      if( item.type ){ transaction.type = item.type; }
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
@@ -146,7 +147,6 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
-      if( item.type ){ transaction.type = item.type; }
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
@@ -353,6 +353,32 @@ const HyperledgerClient = function() {
         }
       });
       resolved(items);
+    }, rejected);
+  };
+
+  vm.queryItemsByType = ( type, resolved, rejected ) => {
+    var where = 'owner.type == _$type';
+    var params = { type: type };
+    vm.prepare(() => {
+      var select = 'SELECT ' + NS + '.Item WHERE (' + where + ')';
+      var query = vm.businessNetworkConnection.buildQuery( select );
+
+      return vm.businessNetworkConnection.query(query, params)
+      .then(items => {
+console.log( items );
+        let serializer = vm.businessNetworkDefinition.getSerializer();
+        var result = [];
+        items.forEach(item => {
+          //result.push(serializer.toJSON(item));
+          //result.push( { id: item.id, name: item.name, type: item.type, body: item.body, amount: item.amout } );
+          result.push(item);
+        });
+        resolved(result);
+      }).catch(error => {
+        console.log('HyperLedgerClient.queryItemsByType(): reject');
+        console.log( error );
+        rejected(error);
+      });
     }, rejected);
   };
 

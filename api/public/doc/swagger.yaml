@@ -224,7 +224,7 @@ paths:
         - name: body
           in: body
           schema:
-            $ref: '#/definitions/ItemIdRequest'
+            $ref: '#/definitions/ItemIdRequestToken'
       responses:
         '200':
           description: Success
@@ -247,6 +247,26 @@ paths:
           type: string
           in: query
           description: token which is retrieved from response of login API.
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+  /api/itemsByType:
+    post:
+      tags:
+        - item
+      summary: Query items by type
+      description: Query multiple items information by type, which can be retrieved from currrent token.
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/QueryItemsByTypeRequestToken'
       responses:
         '200':
           description: Success
@@ -362,6 +382,9 @@ definitions:
       name:
         type: string
         description: User name
+      type:
+        type: string
+        description: User type
       email:
         type: array
         items:
@@ -382,6 +405,9 @@ definitions:
       name:
         type: string
         description: User name
+      type:
+        type: string
+        description: User type
       email:
         type: array
         items:
@@ -427,9 +453,6 @@ definitions:
       name:
         type: string
         description: Item name
-      type:
-        type: string
-        description: Item type
       body:
         type: string
         description: Item body
@@ -445,9 +468,6 @@ definitions:
       name:
         type: string
         description: Item name
-      type:
-        type: string
-        description: Item type
       body:
         type: string
         description: Item body
@@ -512,6 +532,15 @@ definitions:
       item2_id:
         type: string
         description: Item2 ID
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
+  QueryItemsByTypeRequestToken:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Item type
       token:
         type: string
         description: token which is retrieved from response of login API.

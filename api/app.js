@@ -212,6 +212,7 @@ apiRoutes.post( '/user', function( req, res ){
         var id = req.body.id;
         var password = req.body.password;
         var name = req.body.name;
+        var type = req.body.type;
         var email = ( req.body.email ? req.body.email : [] );
         var role = req.body.role;
 
@@ -221,6 +222,7 @@ apiRoutes.post( '/user', function( req, res ){
             id: id,
             password: ( password ? password : user0.password ),
             name: ( name ? name : user0.name ),
+            type: ( type ? type : user0.type ),
             email: ( email ? email : user0.email ),
             role: ( role ? role : user0.role )
           };
@@ -241,6 +243,7 @@ apiRoutes.post( '/user', function( req, res ){
               id: id,
               password: password,
               name: name,
+              type: type,
               email: email,
               role: role
             };
@@ -290,7 +293,7 @@ apiRoutes.get( '/users', function( req, res ){
             //. 全ユーザーが見える
             var result0 = [];
             result.forEach( user0 => {
-              result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+              result0.push( { id: user0.id, name: user0.name, type: user0.type, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
             });
             users = result0;
             break;
@@ -299,7 +302,7 @@ apiRoutes.get( '/users', function( req, res ){
             var result0 = [];
             result.forEach( user0 => {
               if( user0.id == user.id ){
-                result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+                result0.push( { id: user0.id, name: user0.name, type: user0.type, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
               }
             });
             users = result0;
@@ -344,7 +347,7 @@ apiRoutes.post( '/queryUsers', function( req, res ){
             //. 全ユーザーが見える
             var result0 = [];
             result.forEach( user0 => {
-              result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+              result0.push( { id: user0.id, name: user0.name, type: user0.type, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
             });
             users = result0;
             break;
@@ -353,7 +356,7 @@ apiRoutes.post( '/queryUsers', function( req, res ){
             var result0 = [];
             result.forEach( user0 => {
               if( user0.id == user.id ){
-                result0.push( { id: user0.id, name: user0.name, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
+                result0.push( { id: user0.id, name: user0.name, type: user0.type, email: user0.email, role: user0.role, created: user0.created, loggedin: user0.loggedin } );
               }
             });
             users = result0;
@@ -604,6 +607,61 @@ apiRoutes.post( '/queryItems', function( req, res ){
       }else if( user && user.id ){
         var keyword = req.body.keyword;
         client.queryItems( keyword, result => {
+          var items = [];
+          switch( user.role ){
+          case 0: //. admin
+            //. 全商品が見える
+            var result0 = [];
+            result.forEach( item0 => {
+              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+            });
+            items = result0;
+            break;
+          default:
+            //. 自分のアイテムしか見れない
+            var result0 = [];
+            result.forEach( item0 => {
+              if( item0.owner.id == user.id ){
+                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+              }
+            });
+            items = result0;
+            break;
+          }
+
+          //console.log( items );
+          res.write( JSON.stringify( items, 2, null ) );
+          res.end();
+        }, error => {
+          res.status( 500 );
+          res.write( JSON.stringify( error, 2, null ) );
+          res.end();
+        });
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
+
+apiRoutes.post( '/itemsByType', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var type = req.body.type;
+        client.queryItemsByType( type, result => {
           var items = [];
           switch( user.role ){
           case 0: //. admin

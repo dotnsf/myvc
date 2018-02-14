@@ -317,9 +317,67 @@ app.post( '/trade', function( req, res ){
   var json1 = { token: token };
   if( req.body.item_id ){ json1['item_id'] = req.body.item_id; }
   if( req.body.user_id ){ json1['user_id'] = req.body.user_id; }
-console.log( json1 );
   var options1 = {
     url: settings.api_url + '/trade',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    json: json1
+  };
+  request( options1, ( err1, res1, item1 ) => {
+    res.contentType( 'application/json' );
+    if( err1 ){
+      console.log( err1 );
+      res.status( 403 );
+      res.write( JSON.stringify( err1, 2, null ) );
+      res.end();
+    }else{
+      //console.log( item1 );
+      res.write( JSON.stringify( item1, 2, null ) );
+      res.end();
+    }
+  });
+});
+
+app.post( '/split', function( req, res ){
+  var token = req.session.token; //req.body.token;
+
+  var json1 = { token: token };
+  if( req.body.item_id ){ json1['item_id'] = req.body.item_id; }
+  if( req.body.user_id ){ json1['user_id'] = req.body.user_id; }
+  if( req.body.amount ){ json1['amount'] = parseInt( req.body.amount ); }
+  var options1 = {
+    url: settings.api_url + '/split',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    json: json1
+  };
+  request( options1, ( err1, res1, item1 ) => {
+    res.contentType( 'application/json' );
+    if( err1 ){
+      console.log( err1 );
+      res.status( 403 );
+      res.write( JSON.stringify( err1, 2, null ) );
+      res.end();
+    }else{
+      //console.log( item1 );
+      res.write( JSON.stringify( item1, 2, null ) );
+      res.end();
+    }
+  });
+});
+
+app.post( '/merge', function( req, res ){
+  var token = req.session.token; //req.body.token;
+
+  var json1 = { token: token };
+  if( req.body.item1_id ){ json1['item1_id'] = req.body.item1_id; }
+  if( req.body.item2_id ){ json1['item2_id'] = req.body.item2_id; }
+  var options1 = {
+    url: settings.api_url + '/merge',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
