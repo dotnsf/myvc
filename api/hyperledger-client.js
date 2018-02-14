@@ -24,6 +24,13 @@ const HyperledgerClient = function() {
       return vm.businessNetworkConnection.connect(cardName)
       .then(result => {
         vm.businessNetworkDefinition = result;
+
+        //. Events Subscription
+        vm.businessNetworkConnection.on( 'event', ( event ) => {
+          //. event: { '$class': '***', 'eventId': 'xxxx-xxxx-xxxx-xxxxxx#x' }
+          console.log( event );
+        });
+
         resolved();
       }).catch(error => {
         console.log('HyperLedgerClient.prepare(): reject');
