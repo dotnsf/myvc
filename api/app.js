@@ -758,7 +758,7 @@ apiRoutes.post( '/trade', function( req, res ){
                     res.end();
                   });
                 }, error => {
-console.log( error );
+                  console.log( error );
                   res.status( 404 );
                   res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
                   res.end();
@@ -779,8 +779,135 @@ console.log( error );
             res.end();
           });
         }
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
 
+apiRoutes.post( '/split', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var item_id = req.body.item_id;
+        if( !item_id ){
+          res.status( 404 );
+          res.write( JSON.stringify( { status: false, message: 'No item_id provided' }, 2, null ) );
+          res.end();
+        }else{
+          client.getItem( item_id, item => {
+            if( item && item.owner ){
+              if( item.owner.id == user.id ){
+                var user_id = req.body.user_id;
+                client.getUser( user_id, new_owner => {
+                  var amount = req.body.amount;
+                  client.splitOwnerTx( item, new_owner, amount, result => {
+                    res.write( JSON.stringify( { status: true }, 2, null ) );
+                    res.end();
+                  }, error => {
+                    res.status( 404 );
+                    res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                    res.end();
+                  });
+                }, error => {
+                  console.log( error );
+                  res.status( 404 );
+                  res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                  res.end();
+                });
+              }else{
+                res.status( 404 );
+                res.write( JSON.stringify( { status: false, message: 'Invalid item_id.' }, 2, null ) );
+                res.end();
+              }
+            }else{
+              res.status( 401 );
+              res.write( JSON.stringify( { status: false, message: 'Invalid item_id.' }, 2, null ) );
+              res.end();
+            }
+          }, error => {
+            res.status( 404 );
+            res.write( JSON.stringify( { status: false, message: 'No item found with id = ' + item_id + '.' }, 2, null ) );
+            res.end();
+          });
+        }
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
 
+apiRoutes.post( '/merge', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var item1_id = req.body.item1_id;
+        if( !item1_id ){
+          res.status( 404 );
+          res.write( JSON.stringify( { status: false, message: 'No item_id provided' }, 2, null ) );
+          res.end();
+        }else{
+          client.getItem( item1_id, item1 => {
+            if( item1 && item1.owner ){
+              if( item1.owner.id == user.id ){
+                var item2_id = req.body.item2_id;
+                client.getItem( item2_id, item2 => {
+                  client.mergeItemsTx( item1, item2, result => {
+                    res.write( JSON.stringify( { status: true }, 2, null ) );
+                    res.end();
+                  }, error => {
+                    res.status( 404 );
+                    res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                    res.end();
+                  });
+                }, error => {
+                  console.log( error );
+                  res.status( 404 );
+                  res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                  res.end();
+                });
+              }else{
+                res.status( 404 );
+                res.write( JSON.stringify( { status: false, message: 'Invalid item1_id.' }, 2, null ) );
+                res.end();
+              }
+            }else{
+              res.status( 401 );
+              res.write( JSON.stringify( { status: false, message: 'Invalid item1_id.' }, 2, null ) );
+              res.end();
+            }
+          }, error => {
+            res.status( 404 );
+            res.write( JSON.stringify( { status: false, message: 'No item found with id = ' + item_id + '.' }, 2, null ) );
+            res.end();
+          });
+        }
       }else{
         res.status( 401 );
         res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
@@ -839,4 +966,3 @@ function compare( a, b ){
 
   return comparison;
 }
-

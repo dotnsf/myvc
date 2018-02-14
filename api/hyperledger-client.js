@@ -104,25 +104,15 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
+      if( item.type ){ transaction.type = item.type; }
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
       transaction.owner = factory.newRelationship( NS, 'User', item.owner.id );
 
-      let serializer = vm.businessNetworkDefinition.getSerializer();
-      let resource = serializer.fromJSON({
-        '$class': NS + '.CreateItemTx',
-        'id': item.id,
-        'name': item.name,
-        'body': item.body,
-        'amount': item.amount,
-        'owner': item.owner.id
-      });
-
       //console.log( transaction );
 
       return vm.businessNetworkConnection.submitTransaction(transaction)
-      //return vm.businessNetworkConnection.submitTransaction(resource)
       .then(result => {
         //resolved(result);
         var result0 = {transactionId: transaction.transactionId, timestamp: transaction.timestamp};
@@ -141,6 +131,7 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
+      if( item.type ){ transaction.type = item.type; }
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
@@ -191,6 +182,43 @@ const HyperledgerClient = function() {
         resolved(result);
       }).catch(error => {
         console.log('HyperLedgerClient.changeOwnerTx(): reject');
+        rejected(error);
+      });
+    }, rejected);
+  };
+
+  vm.splitOwnerTx = (item, user, amount, resolved, rejected) => {
+    vm.prepare(() => {
+      let factory = vm.businessNetworkDefinition.getFactory();
+      let transaction = factory.newTransaction(NS, 'SplitOwnerTx');
+
+      transaction.item = factory.newRelationship( NS, 'Item', item.id );
+      transaction.user = factory.newRelationship( NS, 'User', user.id );
+      transaction.amount = amount;
+
+      return vm.businessNetworkConnection.submitTransaction(transaction)
+      .then(result => {
+        resolved(result);
+      }).catch(error => {
+        console.log('HyperLedgerClient.splitOwnerTx(): reject');
+        rejected(error);
+      });
+    }, rejected);
+  };
+
+  vm.mergeItemsTx = (item1, item2, resolved, rejected) => {
+    vm.prepare(() => {
+      let factory = vm.businessNetworkDefinition.getFactory();
+      let transaction = factory.newTransaction(NS, 'MergeItemsTx');
+
+      transaction.item1 = factory.newRelationship( NS, 'Item', item1.id );
+      transaction.item2 = factory.newRelationship( NS, 'Item', item2.id );
+
+      return vm.businessNetworkConnection.submitTransaction(transaction)
+      .then(result => {
+        resolved(result);
+      }).catch(error => {
+        console.log('HyperLedgerClient.mergeItemsTx(): reject');
         rejected(error);
       });
     }, rejected);

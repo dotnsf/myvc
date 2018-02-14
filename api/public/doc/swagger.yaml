@@ -294,6 +294,46 @@ paths:
           description: Access error
         '500':
           description: Server error
+  /api/split:
+    post:
+      tags:
+        - trade
+      summary: Split item with new owner
+      description: Split item with new owner
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/SplitRequestToken'
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+  /api/merge:
+    post:
+      tags:
+        - trade
+      summary: Merge two items into one
+      description: Merge tow items into one
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/MergeRequestToken'
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
 definitions:
   AdminUserRequest:
     type: object
@@ -442,6 +482,33 @@ definitions:
       token:
         type: string
         description: token which is retrieved from response of login API.
+  SplitRequestToken:
+    type: object
+    properties:
+      item_id:
+        type: string
+        description: Item ID
+      user_id:
+        type: string
+        description: User ID for new owner
+      amount:
+        type: integer
+        description: Split amount from Item
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
+  MergeRequestToken:
+    type: object
+    properties:
+      item1_id:
+        type: string
+        description: Item1 ID
+      item2_id:
+        type: string
+        description: Item2 ID
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
   QueryRequestToken:
     type: object
     properties:
@@ -476,7 +543,7 @@ definitions:
         description: User name
       role:
         type: integer
-        description: User role(0:admin, 1:end user, 2:EC provider, 3:delivery)
+        description: User role(0:admin, 1:user)
   ItemResult:
     type: object
     properties:
