@@ -1,11 +1,5 @@
 //. app.js
 
-//. Run following commands to create BNC(Business Network Card) for PeerAdmin
-//. $ cd /fabric
-//. $ ./createPeerAdmin.sh
-
-//. Run following command to deploy business network before running this app.js
-//. $ composer network deploy -a ./myvc-network.bna -A admin -S adminpw -c PeerAdmin@hlfv1 -f admincard
 
 var express = require( 'express' ),
     basicAuth = require( 'basic-auth-connect' ),
