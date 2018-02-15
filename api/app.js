@@ -479,6 +479,7 @@ apiRoutes.post( '/item', function( req, res ){
       }else if( user && user.id ){
         var id = ( req.body.id ? req.body.id : uuid.v1() );
         var name = ( req.body.name ? req.body.name : '' );
+        var type = ( user.type ? user.type : '' );
         var body = ( req.body.body ? req.body.body : '' );
         var amount = ( req.body.amount ? ( typeof( req.body.amount ) == 'number' ? req.body.amount : parseInt( req.body.amount ) ) : 1 );
         var owner = user;
@@ -488,6 +489,7 @@ apiRoutes.post( '/item', function( req, res ){
           var item1 = {
             id: id,
             name: name,
+            type: type,
             body: body,
             amount: amount,
             owner: owner
@@ -508,6 +510,7 @@ apiRoutes.post( '/item', function( req, res ){
             var item1 = {
               id: id,
               name: name,
+              type: type,
               body: body,
               amount: amount,
               owner: owner
@@ -558,7 +561,7 @@ apiRoutes.get( '/items', function( req, res ){
             //. 全商品が見える
             var result0 = [];
             result.forEach( item0 => {
-              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString(), modified: item0.modified } );
+              result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString(), modified: item0.modified } );
             });
             items = result0;
             break;
@@ -567,7 +570,7 @@ apiRoutes.get( '/items', function( req, res ){
             var result0 = [];
             result.forEach( item0 => {
               if( item0.owner.toString().endsWith( '#' + user.id + '}' ) ){
-                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString(), modified: item0.modified } );
+                result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString(), modified: item0.modified } );
               }
             });
             items = result0;
@@ -613,7 +616,7 @@ apiRoutes.post( '/queryItems', function( req, res ){
             //. 全商品が見える
             var result0 = [];
             result.forEach( item0 => {
-              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+              result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
             });
             items = result0;
             break;
@@ -622,7 +625,7 @@ apiRoutes.post( '/queryItems', function( req, res ){
             var result0 = [];
             result.forEach( item0 => {
               if( item0.owner.id == user.id ){
-                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+                result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
               }
             });
             items = result0;
@@ -661,14 +664,14 @@ apiRoutes.post( '/itemsByAttr', function( req, res ){
         res.end();
       }else if( user && user.id ){
         var type = req.body.type;
-        client.queryItemsByType( type, result => {
+        client.queryItemsByAttr( type, result => {
           var items = [];
           switch( user.role ){
           case 0: //. admin
             //. 全商品が見える
             var result0 = [];
             result.forEach( item0 => {
-              result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+              result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
             });
             items = result0;
             break;
@@ -676,8 +679,8 @@ apiRoutes.post( '/itemsByAttr', function( req, res ){
             //. 自分のアイテムしか見れない
             var result0 = [];
             result.forEach( item0 => {
-              if( item0.owner.id == user.id ){
-                result0.push( { id: item0.id, name: item0.name, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
+              if( item0.owner.toString().endsWith( '#' + user.id + '}' ) ){
+                result0.push( { id: item0.id, name: item0.name, type: item0.type, body: item0.body, amount: item0.amount, owner: item0.owner.toString() } );
               }
             });
             items = result0;
@@ -741,10 +744,6 @@ apiRoutes.get( '/item', function( req, res ){
         res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
         res.end();
       }
-    }, error => {
-      res.status( 500 );
-      res.write( JSON.stringify( error, 2, null ) );
-      res.end();
     });
   }
 });

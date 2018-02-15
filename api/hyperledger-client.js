@@ -121,6 +121,7 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
+      transaction.type = item.type;
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
@@ -130,7 +131,6 @@ const HyperledgerClient = function() {
 
       return vm.businessNetworkConnection.submitTransaction(transaction)
       .then(result => {
-        //resolved(result);
         var result0 = {transactionId: transaction.transactionId, timestamp: transaction.timestamp};
         resolved(result0);
       }).catch(error => {
@@ -147,6 +147,7 @@ const HyperledgerClient = function() {
       //console.log( transaction );
       transaction.id = item.id;
       transaction.name = item.name;
+      transaction.type = item.type;
       transaction.body = item.body;
       transaction.amount = item.amount;
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
@@ -356,8 +357,8 @@ const HyperledgerClient = function() {
     }, rejected);
   };
 
-  vm.queryItemsByType = ( type, resolved, rejected ) => {
-    var where = 'owner.type == _$type';
+  vm.queryItemsByAttr = ( type, resolved, rejected ) => {
+    var where = 'type == _$type';
     var params = { type: type };
     vm.prepare(() => {
       var select = 'SELECT ' + NS + '.Item WHERE (' + where + ')';
@@ -365,7 +366,6 @@ const HyperledgerClient = function() {
 
       return vm.businessNetworkConnection.query(query, params)
       .then(items => {
-console.log( items );
         let serializer = vm.businessNetworkDefinition.getSerializer();
         var result = [];
         items.forEach(item => {
@@ -375,7 +375,7 @@ console.log( items );
         });
         resolved(result);
       }).catch(error => {
-        console.log('HyperLedgerClient.queryItemsByType(): reject');
+        console.log('HyperLedgerClient.queryItemsByAttr(): reject');
         console.log( error );
         rejected(error);
       });
