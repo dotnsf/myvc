@@ -10,28 +10,33 @@ $(function(){
 });
 
 function logout(){
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'POST',
     url: '/logout',
     data: {},
     success: function( data ){
+      obj.remove();
       window.location.href = '/';
     },
     error: function(){
+      obj.remove();
       window.location.href = '/';
     }
   });
 }
 
 function getUsers(){
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'GET',
     url: '/users',
     success: function( users ){
+      obj.remove();
       //users = JSON.parse( users );
       //console.log( users );
       users.forEach( user => {
-        var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td>";
+        var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + user.type + "</td><td> " + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td>";
         tr += "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.delete') %>' onClick='deleteUser(\"" + user.id + "\")'/></td>";
         tr += "</tr>";
         $('#users_table_tbody').append( tr );
@@ -40,6 +45,7 @@ function getUsers(){
         + "<td><input type='text' id='user_id' placeholder='<%= __('users.placeholder.id') %>'/></td>"
         + "<td><input type='password' id='user_password' placeholder='<%= __('users.placeholder.password') %>'/></td>"
         + "<td><input type='text' id='user_name' placeholder='<%= __('users.placeholder.name') %>'/></td>"
+        + "<td><input type='text' id='user_type' placeholder='<%= __('users.placeholder.type') %>'/></td>"
         + "<td><input type='text' id='user_email' placeholder='<%= __('users.placeholder.email') %>'/></td>"
         + "<td><input type='text' id='user_role' placeholder='<%= __('users.placeholder.role') %>'/></td>"
         + "<td><!-- <input type='text' id='user_created' placeholder='<%= __('users.placeholder.created') %>'/> --> - </td>"
@@ -48,6 +54,7 @@ function getUsers(){
       $('#users_table_tbody').append( tr );
     },
     error: function( err ){
+      obj.remove();
       console.log( err );
     }
   });
@@ -57,17 +64,21 @@ function addUser(){
   var id = $('#user_id').val();
   var password = $('#user_password').val();
   var name = $('#user_name').val();
+  var type = $('#user_type').val();
   var email = $('#user_email').val();
   var role = $('#user_role').val();
 
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'POST',
     url: '/user',
-    data: { id: id, password: password, name: name, email: email, role: role },
+    data: { id: id, password: password, name: name, type: type, email: email, role: role },
     success: function( data ){
+      obj.remove();
       window.location.href = '/';
     },
     error: function(){
+      obj.remove();
       window.location.href = '/';
     }
   });
@@ -77,14 +88,17 @@ function deleteUser(id){
   console.log( 'deleteUser(): id=' + id );
 
   if( window.confirm( '<%= __('users.confirm.delete') %>' + id + ' ?' ) ){
+    var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
     $.ajax({
       type: 'DELETE',
       url: '/user',
       data: { id: id },
       success: function( data ){
+        obj.remove();
         window.location.href = '/';
       },
       error: function(){
+        obj.remove();
         window.location.href = '/';
       }
     });
@@ -93,10 +107,12 @@ function deleteUser(id){
 
 
 function getItems(){
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'GET',
     url: '/items',
     success: function( items ){
+      obj.remove();
       console.log( items );
       items.forEach( item => {
         var owner_id = '';
@@ -104,7 +120,7 @@ function getItems(){
         if( n > -1 ){
           owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
         }
-        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
+        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.type + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
 <% if ( user.role == 0 ){ %>
         tr += "<td><input type='button' class='btn btn-default' value='Edit' onClick='editItem(" + JSON.stringify(item) + ")'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.delete') %>' onClick='deleteItem(\"" + item.id + "\")'/></td>";
 <% }else{ %>
@@ -117,6 +133,7 @@ function getItems(){
       var tr = "<tr>"
       + "<td><input type='text' id='item_id' placeholder='<%= __('items.placeholder.id') %>'/></td>"
       + "<td><input type='text' id='item_name' placeholder='<%= __('items.placeholder.name') %>'/></td>"
+      + "<td><input type='text' id='item_type' placeholder='<%= __('items.placeholder.type') %>'/></td>"
       + "<td><input type='text' id='item_body' placeholder='<%= __('items.placeholder.body') %>'/></td>"
       + "<td><input type='text' id='item_amount' placeholder='<%= __('items.placeholder.amount') %>'/></td>"
       + "<td><!-- <input type='text' id='item_owner_id' placeholder='<%= __('items.placeholder.owner_id') %>'/> --> - </td>"
@@ -126,6 +143,7 @@ function getItems(){
       $('#items_table_tbody').append( tr );
     },
     error: function( err ){
+      obj.remove();
       console.log( err );
     }
   });
@@ -134,18 +152,22 @@ function getItems(){
 function addItem(){
   var id = $('#item_id').val();
   var name = $('#item_name').val();
+  var type = $('#item_type').val();
   var body = $('#item_body').val();
   var amount = $('#item_amount').val();
   var owner_id = $('#item_owner_id').val();
 
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'POST',
     url: '/item',
-    data: { id: id, name: name, body: body, amount: amount, owner_id: owner_id },
+    data: { id: id, name: name, type: type, body: body, amount: amount, owner_id: owner_id },
     success: function( data ){
+      obj.remove();
       window.location.href = '/';
     },
     error: function(){
+      obj.remove();
       window.location.href = '/';
     }
   });
@@ -155,14 +177,17 @@ function deleteItem(id){
   console.log( 'deleteItem(): id=' + id );
 
   if( window.confirm( '<%= __('items.confirm.delete') %>' + id + ' ?' ) ){
+    var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
     $.ajax({
       type: 'DELETE',
       url: '/item',
       data: { id: id },
       success: function( data ){
+        obj.remove();
         window.location.href = '/';
       },
       error: function(){
+        obj.remove();
         window.location.href = '/';
       }
     });
@@ -172,6 +197,7 @@ function deleteItem(id){
 function editItem( item ){
   $('#item_id').val( item.id );
   $('#item_name').val( item.name );
+  $('#item_type').val( item.type );
   $('#item_body').val( item.body );
   $('#item_amount').val( item.amount );
 }
@@ -179,14 +205,17 @@ function editItem( item ){
 function tradeItem( item ){
   if( window.confirm( '<%= __('items.confirm.trade') %>' + item.id + ' ?' ) ){
     var new_owner_id = $('#new_owner_id_for_'+item.id).val();
+    var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
     $.ajax({
       type: 'POST',
       url: '/trade',
       data: { item_id: item.id, user_id: new_owner_id },
       success: function( data ){
+        obj.remove();
         window.location.href = '/';
       },
       error: function(){
+        obj.remove();
         window.location.href = '/';
       }
     });
@@ -210,9 +239,10 @@ html, body, {
   <table class="table table-hover table-bordered" id="items_table">
     <thead class="table-inverse">
       <tr>
-        <tr><th bgcolor="#ddddff" colspan="7"><%= __('items.table.title') %></th></tr>
+        <tr><th bgcolor="#ddddff" colspan="8"><%= __('items.table.title') %></th></tr>
         <th><%= __('items.table.id') %></th>
         <th><%= __('items.table.name') %></th>
+        <th><%= __('items.table.type') %></th>
         <th><%= __('items.table.body') %></th>
         <th><%= __('items.table.amount') %></th>
         <th><%= __('items.table.owner') %></th>
@@ -232,10 +262,11 @@ html, body, {
   <table class="table table-hover table-bordered" id="users_table">
     <thead class="table-inverse">
       <tr>
-        <tr><th bgcolor="#ddddff" colspan="7"><%= __('users.table.title') %></th></tr>
+        <tr><th bgcolor="#ddddff" colspan="8"><%= __('users.table.title') %></th></tr>
         <th><%= __('users.table.id') %></th>
         <th><%= __('users.table.password') %></th>
         <th><%= __('users.table.name') %></th>
+        <th><%= __('users.table.type') %></th>
         <th><%= __('users.table.email') %></th>
         <th><%= __('users.table.role') %></th>
         <th><%= __('users.table.created') %></th>
