@@ -166,6 +166,7 @@ app.post( '/user', function( req, res ){
   if( req.body.id ){ json1['id'] = req.body.id; }
   if( req.body.password ){ json1['password'] = req.body.password; }
   if( req.body.name ){ json1['name'] = req.body.name; }
+  if( req.body.type ){ json1['type'] = req.body.type; }
   if( req.body.email ){ json1['email'] = req.body.email.split(','); }
   if( req.body.role ){ json1['role'] = parseInt( req.body.role ); } //. parseInt() 必須
   var options1 = {
@@ -257,6 +258,7 @@ app.post( '/item', function( req, res ){
   var json1 = { token: token };
   if( req.body.id ){ json1['id'] = req.body.id; }
   if( req.body.name ){ json1['name'] = req.body.name; }
+  //if( req.body.type ){ json1['type'] = req.body.type; }
   if( req.body.body ){ json1['body'] = req.body.body; }
   if( req.body.amount ){ json1['amount'] = parseInt( req.body.amount ); } //. parseInt() 必須
   //if( req.body.owner_id ){ json1['owner_id'] = req.body.owner_id; }

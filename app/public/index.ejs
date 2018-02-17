@@ -5,8 +5,9 @@
 $(function(){
 <% if ( user.role == 0 ){ %>
   getUsers();
-<% } %>
+<% }else{ %>
   getItems();
+<% } %>
 });
 
 function logout(){
@@ -235,28 +236,7 @@ html, body, {
 
 <%- include('./nav', {}) %>
 
-<div class="container-fluid" style="padding:20px 0; font-size:8px;">
-  <table class="table table-hover table-bordered" id="items_table">
-    <thead class="table-inverse">
-      <tr>
-        <tr><th bgcolor="#ddddff" colspan="8"><%= __('items.table.title') %></th></tr>
-        <th><%= __('items.table.id') %></th>
-        <th><%= __('items.table.name') %></th>
-        <th><%= __('items.table.type') %></th>
-        <th><%= __('items.table.body') %></th>
-        <th><%= __('items.table.amount') %></th>
-        <th><%= __('items.table.owner') %></th>
-        <th><%= __('items.table.modified') %></th>
-        <th><%= __('items.table.action') %></th>
-      </tr>
-    </thead>
-    <tbody id="items_table_tbody">
-    </tbody>
-  </table>
-</div>
-
 <% if( user.role == 0 ){ %>
-<hr/>
 
 <div class="container-fluid" style="padding:20px 0; font-size:8px;">
   <table class="table table-hover table-bordered" id="users_table">
@@ -274,6 +254,28 @@ html, body, {
       </tr>
     </thead>
     <tbody id="users_table_tbody">
+    </tbody>
+  </table>
+</div>
+
+<% }else{ %>
+
+<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+  <table class="table table-hover table-bordered" id="items_table">
+    <thead class="table-inverse">
+      <tr>
+        <tr><th bgcolor="#ddddff" colspan="8"><%= __('items.table.title') %></th></tr>
+        <th><%= __('items.table.id') %></th>
+        <th><%= __('items.table.name') %></th>
+        <th><%= __('items.table.type') %></th>
+        <th><%= __('items.table.body') %></th>
+        <th><%= __('items.table.amount') %></th>
+        <th><%= __('items.table.owner') %></th>
+        <th><%= __('items.table.modified') %></th>
+        <th><%= __('items.table.action') %></th>
+      </tr>
+    </thead>
+    <tbody id="items_table_tbody">
     </tbody>
   </table>
 </div>
