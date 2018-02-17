@@ -5,6 +5,7 @@
 $(function(){
 <% if ( user.role == 0 ){ %>
   getUsers();
+  getItemsForAdmin();
 <% }else{ %>
   getItems();
 <% } %>
@@ -107,7 +108,7 @@ function deleteUser(id){
 }
 
 
-function getItems(){
+function getItemsForAdmin(){
   var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'GET',
@@ -122,11 +123,35 @@ function getItems(){
           owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
         }
         var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.type + "</td><td>" + item.body + "</td><td>" + item.amount + "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>";
-<% if ( user.role == 0 ){ %>
-        tr += "<td><input type='button' class='btn btn-default' value='Edit' onClick='editItem(" + JSON.stringify(item) + ")'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.delete') %>' onClick='deleteItem(\"" + item.id + "\")'/></td>";
-<% }else{ %>
+        tr += "</tr>";
+        $('#items_table_tbody').append( tr );
+      });
+    },
+    error: function( err ){
+      obj.remove();
+      console.log( err );
+    }
+  });
+}
+
+function getItems(){
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
+  $.ajax({
+    type: 'GET',
+    url: '/items',
+    success: function( items ){
+      obj.remove();
+      console.log( items );
+      items.forEach( item => {
+        var owner_id = '';
+        var n = item.owner.indexOf( '#' );
+        if( n > -1 ){
+          owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
+        }
+        var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.type + "</td><td>" + item.body + "</td><td>";
+        tr += item.amount;
+        tr += ( "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>" );
         tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
-<% } %>
         tr += "</tr>";
         $('#items_table_tbody').append( tr );
       });
@@ -254,6 +279,27 @@ html, body, {
       </tr>
     </thead>
     <tbody id="users_table_tbody">
+    </tbody>
+  </table>
+</div>
+
+<hr/>
+
+<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+  <table class="table table-hover table-bordered" id="items_table">
+    <thead class="table-inverse">
+      <tr>
+        <tr><th bgcolor="#ddddff" colspan="7"</th></tr>
+        <th><%= __('items.table.id') %></th>
+        <th><%= __('items.table.name') %></th>
+        <th><%= __('items.table.type') %></th>
+        <th><%= __('items.table.body') %></th>
+        <th><%= __('items.table.amount') %></th>
+        <th><%= __('items.table.owner') %></th>
+        <th><%= __('items.table.modified') %></th>
+      </tr>
+    </thead>
+    <tbody id="items_table_tbody">
     </tbody>
   </table>
 </div>
