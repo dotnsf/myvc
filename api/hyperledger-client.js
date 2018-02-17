@@ -113,6 +113,21 @@ const HyperledgerClient = function() {
     }, rejected);
   };
 
+  vm.userLoggedInTx = (id, resolved, rejected) => {
+    vm.prepare(() => {
+      let factory = vm.businessNetworkDefinition.getFactory();
+      let transaction = factory.newTransaction(NS, 'UserLoggedInTx');
+      transaction.id = id;
+      return vm.businessNetworkConnection.submitTransaction(transaction)
+      .then(result => {
+        resolved(result);
+      }).catch(error => {
+        console.log('HyperLedgerClient.userLoggedInTx(): reject');
+        rejected(error);
+      });
+    }, rejected);
+  };
+
 
   vm.createItemTx = (item, resolved, rejected) => {
     vm.prepare(() => {

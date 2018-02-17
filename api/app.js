@@ -115,8 +115,7 @@ apiRoutes.post( '/login', function( req, res ){
       var token = jwt.sign( user, app.get( 'superSecret' ), { expiresIn: '25h' } );
 
       //. user.loggedin を更新する
-      user.loggedin = new Date();
-      client.updateUserTx( user, success => {
+      client.userLoggedInTx( id, success => {
         res.write( JSON.stringify( { status: true, token: token }, 2, null ) );
         res.end();
       }, error => {
