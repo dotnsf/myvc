@@ -4,4 +4,6 @@ settings.js.*
 admincard
 *.card
 composer-logs/
+npm-debug.log
+
 
