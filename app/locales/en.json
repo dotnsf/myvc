@@ -50,5 +50,7 @@
 	"items.table.modified": "Modified",
 	"users.table.email": "Email",
 	"users.table.created": "Created",
-	"items.confirm.trade": "Trade Item: "
+	"users.table.loggedin": "Logged in",
+	"items.confirm.trade": "Trade Item: ",
+	"users.placeholder.loggedin": "users.placeholder.loggedin"
 }

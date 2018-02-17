@@ -38,7 +38,7 @@ function getUsers(){
       //users = JSON.parse( users );
       //console.log( users );
       users.forEach( user => {
-        var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + user.type + "</td><td> " + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td>";
+        var tr = "<tr><td>" + user.id + "</td><td>********</td><td>" + user.name + "</td><td>" + user.type + "</td><td> " + abbreviateArray( user.email ) + "</td><td>" + user.role + "</td><td>" + user.created + "</td><td>" + user.loggedin + "</td>";
         tr += "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.delete') %>' onClick='deleteUser(\"" + user.id + "\")'/></td>";
         tr += "</tr>";
         $('#users_table_tbody').append( tr );
@@ -51,6 +51,7 @@ function getUsers(){
         + "<td><input type='text' id='user_email' placeholder='<%= __('users.placeholder.email') %>'/></td>"
         + "<td><input type='text' id='user_role' placeholder='<%= __('users.placeholder.role') %>'/></td>"
         + "<td><!-- <input type='text' id='user_created' placeholder='<%= __('users.placeholder.created') %>'/> --> - </td>"
+        + "<td><!-- <input type='text' id='user_loggedin' placeholder='<%= __('users.placeholder.loggedin') %>'/> --> - </td>"
         + "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.add') %>' onClick='addUser();'/></td>"
         + "</tr>"
       $('#users_table_tbody').append( tr );
@@ -267,7 +268,7 @@ html, body, {
   <table class="table table-hover table-bordered" id="users_table">
     <thead class="table-inverse">
       <tr>
-        <tr><th bgcolor="#ddddff" colspan="8"><%= __('users.table.title') %></th></tr>
+        <tr><th bgcolor="#ddddff" colspan="9"><%= __('users.table.title') %></th></tr>
         <th><%= __('users.table.id') %></th>
         <th><%= __('users.table.password') %></th>
         <th><%= __('users.table.name') %></th>
@@ -275,6 +276,7 @@ html, body, {
         <th><%= __('users.table.email') %></th>
         <th><%= __('users.table.role') %></th>
         <th><%= __('users.table.created') %></th>
+        <th><%= __('users.table.loggedin') %></th>
         <th><%= __('users.table.action') %></th>
       </tr>
     </thead>
