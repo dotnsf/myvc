@@ -49,7 +49,7 @@ function getUsers(){
         + "<td><input type='text' id='user_name' placeholder='<%= __('users.placeholder.name') %>'/></td>"
         + "<td><input type='text' id='user_type' placeholder='<%= __('users.placeholder.type') %>'/></td>"
         + "<td><input type='text' id='user_email' placeholder='<%= __('users.placeholder.email') %>'/></td>"
-        + "<td><input type='text' id='user_role' placeholder='<%= __('users.placeholder.role') %>'/></td>"
+        + "<td><input type='text' id='user_role' placeholder='<%= __('users.placeholder.role') %>' value='1'/></td>"
         + "<td><!-- <input type='text' id='user_created' placeholder='<%= __('users.placeholder.created') %>'/> --> - </td>"
         + "<td><!-- <input type='text' id='user_loggedin' placeholder='<%= __('users.placeholder.loggedin') %>'/> --> - </td>"
         + "<td><input type='button' class='btn btn-default' value='<%= __('users.buttonlabel.add') %>' onClick='addUser();'/></td>"
@@ -142,7 +142,13 @@ function getItems(){
     url: '/items',
     success: function( items ){
       obj.remove();
-      console.log( items );
+      //console.log( items );
+
+      var max_amount = 0;
+      items.forEach( item => {
+        if( item.amount > max_amount ){ max_amount = item.amount; }
+      });
+
       items.forEach( item => {
         var owner_id = '';
         var n = item.owner.indexOf( '#' );
@@ -150,7 +156,11 @@ function getItems(){
           owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
         }
         var tr = "<tr><td>" + item.id + "</td><td>" + item.name + "</td><td>" + item.type + "</td><td>" + item.body + "</td><td>";
-        tr += item.amount;
+
+        //tr += item.amount;
+        var pct = Math.round( item.amount / max_amount * 100 );
+        tr += "<div class='progress'><div class='progress-bar progress-bar-danger' role='progressbar' aria-valuenow='" + item.amount + "' aria-valuemin='0' aria-valuemax='" + max_amount + "' style='width:" + pct + "%'>" + item.amount + "</div></div>";
+
         tr += ( "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>" );
         tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
         tr += "</tr>";
