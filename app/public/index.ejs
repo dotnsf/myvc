@@ -149,6 +149,7 @@ function getItems(){
         if( item.amount > max_amount ){ max_amount = item.amount; }
       });
 
+      var dt = ( new Date() ).getTime() - 120000;
       items.forEach( item => {
         var owner_id = '';
         var n = item.owner.indexOf( '#' );
@@ -159,7 +160,11 @@ function getItems(){
 
         //tr += item.amount;
         var pct = Math.round( item.amount / max_amount * 100 );
-        tr += "<div class='progress'><div class='progress-bar progress-bar-danger' role='progressbar' aria-valuenow='" + item.amount + "' aria-valuemin='0' aria-valuemax='" + max_amount + "' style='width:" + pct + "%'>" + item.amount + "</div></div>";
+        tr += "<div class='progress'><div class='progress-bar progress-bar-danger";
+        if( item.modified.getTime() > dt ){
+          tr += " progress-bar-striped active";
+        }
+        tr += "' role='progressbar' aria-valuenow='" + item.amount + "' aria-valuemin='0' aria-valuemax='" + max_amount + "' style='width:" + pct + "%'>" + item.amount + "</div></div>";
 
         tr += ( "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>" );
         tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
