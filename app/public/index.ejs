@@ -167,7 +167,11 @@ function getItems(){
         tr += "' role='progressbar' aria-valuenow='" + item.amount + "' aria-valuemin='0' aria-valuemax='" + max_amount + "' style='width:" + pct + "%'>" + item.amount + "</div></div>";
 
         tr += ( "</td><td>" + owner_id + "</td><td>" + item.modified + "</td>" );
-        tr += "<td> -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>Trade' onClick='tradeItem(" + JSON.stringify(item) + ")'/></td>";
+        tr += "<td>"
+          + " -&gt; <input type='text' id='new_owner_id_for_" + item.id + "' value='' placeholder='new owner id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.trade') %>' onClick='tradeItem(" + JSON.stringify(item) + ")'/>"
+          + "<br/> -&gt; <input type='text' id='split_owner_id_for_" + item.id + "' value='' placeholder='split owner id'/><input type='text' id='split_amount_for_" + item.id + "' value='' placeholder='split amount'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.split') %>' onClick='splitItem(" + JSON.stringify(item) + ")'/>"
+          + "<br/> -&gt; <input type='text' id='merge_target_id_for_" + item.id + "' value='' placeholder='merge target id'/><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.merge') %>' onClick='mergeItem(" + JSON.stringify(item) + ")'/>"
+          + "</td>";
         tr += "</tr>";
         $('#items_table_tbody').append( tr );
       });
@@ -252,6 +256,47 @@ function tradeItem( item ){
       type: 'POST',
       url: '/trade',
       data: { item_id: item.id, user_id: new_owner_id },
+      success: function( data ){
+        obj.remove();
+        window.location.href = '/';
+      },
+      error: function(){
+        obj.remove();
+        window.location.href = '/';
+      }
+    });
+  }
+}
+
+function splitItem( item ){
+  if( window.confirm( '<%= __('items.confirm.split') %>' + item.id + ' ?' ) ){
+    var split_owner_id = $('#split_owner_id_for_'+item.id).val();
+    var split_amount = parseInt( $('#split_amount_for_'+item.id).val() );
+    var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
+    $.ajax({
+      type: 'POST',
+      url: '/split',
+      data: { item_id: item.id, user_id: split_owner_id, amount: split_amount },
+      success: function( data ){
+        obj.remove();
+        window.location.href = '/';
+      },
+      error: function(){
+        obj.remove();
+        window.location.href = '/';
+      }
+    });
+  }
+}
+
+function mergeItem( item ){
+  if( window.confirm( '<%= __('items.confirm.merge') %>' + item.id + ' ?' ) ){
+    var merge_target_id = $('#merge_target_id_for_'+item.id).val();
+    var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
+    $.ajax({
+      type: 'POST',
+      url: '/merge',
+      data: { item1_id: item.id, item2_id: item.id },
       success: function( data ){
         obj.remove();
         window.location.href = '/';
