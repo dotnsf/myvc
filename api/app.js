@@ -925,8 +925,8 @@ apiRoutes.post( '/merge', function( req, res ){
         }else{
           client.getItem( item1_id, item1 => {
             if( item1 && item1.owner ){
-              if( item1.owner.id == user.id ){
-                var item2_id = req.body.item2_id;
+              var item2_id = req.body.item2_id;
+              if( item1.owner.id == user.id && item2_id && item1_id != item2_id ){
                 client.getItem( item2_id, item2 => {
                   client.mergeItemsTx( item1, item2, result => {
                     res.write( JSON.stringify( { status: true }, 2, null ) );
@@ -944,12 +944,12 @@ apiRoutes.post( '/merge', function( req, res ){
                 });
               }else{
                 res.status( 404 );
-                res.write( JSON.stringify( { status: false, message: 'Invalid item1_id.' }, 2, null ) );
+                res.write( JSON.stringify( { status: false, message: 'Invalid item1_id or/and item2_id.' }, 2, null ) );
                 res.end();
               }
             }else{
               res.status( 401 );
-              res.write( JSON.stringify( { status: false, message: 'Invalid item1_id.' }, 2, null ) );
+              res.write( JSON.stringify( { status: false, message: 'Invalid item1_id or/and item2_id.' }, 2, null ) );
               res.end();
             }
           }, error => {

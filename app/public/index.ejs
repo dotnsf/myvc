@@ -151,6 +151,7 @@ function getItems(){
 
       var dt = ( new Date() ).getTime() - 120000;
       items.forEach( item => {
+console.log( item );
         var owner_id = '';
         var n = item.owner.indexOf( '#' );
         if( n > -1 ){
@@ -161,7 +162,7 @@ function getItems(){
         //tr += item.amount;
         var pct = Math.round( item.amount / max_amount * 100 );
         tr += "<div class='progress'><div class='progress-bar progress-bar-danger";
-        if( item.modified.getTime() > dt ){
+        if( ( new Date( item.modified ) ).getTime() > dt ){
           tr += " progress-bar-striped active";
         }
         tr += "' role='progressbar' aria-valuenow='" + item.amount + "' aria-valuemin='0' aria-valuemax='" + max_amount + "' style='width:" + pct + "%'>" + item.amount + "</div></div>";
@@ -290,13 +291,13 @@ function splitItem( item ){
 }
 
 function mergeItem( item ){
-  if( window.confirm( '<%= __('items.confirm.merge') %>' + item.id + ' ?' ) ){
-    var merge_target_id = $('#merge_target_id_for_'+item.id).val();
+  var merge_target_id = $('#merge_target_id_for_'+item.id).val();
+  if( window.confirm( '<%= __('items.confirm.merge') %>' + item.id + ' -> ' + merge_target_id + ' ?' ) ){
     var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
     $.ajax({
       type: 'POST',
       url: '/merge',
-      data: { item1_id: item.id, item2_id: item.id },
+      data: { item1_id: merge_target_id, item2_id: item.id },
       success: function( data ){
         obj.remove();
         window.location.href = '/';

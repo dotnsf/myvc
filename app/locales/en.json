@@ -52,5 +52,9 @@
 	"users.table.created": "Created",
 	"users.table.loggedin": "Logged in",
 	"items.confirm.trade": "Trade Item: ",
-	"users.placeholder.loggedin": "users.placeholder.loggedin"
+	"users.placeholder.loggedin": "logged in",
+	"items.buttonlabel.split": "Split Item",
+	"items.buttonlabel.merge": "Merge Item",
+	"items.confirm.split": "Split Item: ",
+	"items.confirm.merge": "Merge Item: "
 }
