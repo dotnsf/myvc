@@ -57,7 +57,7 @@ app.get( '/', function( req, res ){
       if( err ){
         res.redirect( '/login?message=Invalid token.' );
       }else if( user && user.id ){
-        res.render( 'index', { user: user } );
+        res.render( 'index', { user: user, new_update_until_second: settings.new_update_until_second } );
       }else{
         res.redirect( '/login?message=Invalid token.' );
       }

@@ -149,9 +149,8 @@ function getItems(){
         if( item.amount > max_amount ){ max_amount = item.amount; }
       });
 
-      var dt = ( new Date() ).getTime() - 120000;
+      var dt = ( new Date() ).getTime() - <%= new_update_until_second %> * 1000;
       items.forEach( item => {
-console.log( item );
         var owner_id = '';
         var n = item.owner.indexOf( '#' );
         if( n > -1 ){
