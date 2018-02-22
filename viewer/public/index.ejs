@@ -27,33 +27,85 @@ function getTransactions(){
           + "<pre id='pre-for-" + transaction.transactionId + "'>" + JSON.stringify( transaction, null, 2 ) + "</pre>"
           + "</div>";
         $('#transactions').append( div );
+        if( i < result.transactions.length - 1 ){
+          //. Add Chain
+          var chain = "<div class='chain'>" + transaction.transactionId + "</div>"
+          $('#transactions').append( chain );
+        }
 
         getTransaction( transaction.transactionId, transaction.type );
         last_transaction_id = transaction.transactionId;
       }
-      
-      var initialSlide = result.transactions.length - ( result.transactions.length > 1 ? 2 : 1 );
+
       $('.transactions').slick({
         infinite: false,
         slidesToShow: 3,
-        slidesToScroll: 1,
-        initialSlide: initialSlide,
+        slidesToScroll: 2,
+        initialSlide: ( result.transactions.length - 2 ) * 2,
         arrows: true,
-        dots: true,
-        responsive:[
-          {
-            breakpoint: 640,
-            settings:{
-              slidesToShow: 1
-            }
-          }
-        ]
-      })
+        dots: true
+      });
+
+      //setTimeout( updateTransactions, 10000 );
     },
     error: function( err ){
       console.log( err );
     }
   });
+}
+
+function updateTransactions(){
+  //console.log( 'updateTransactions' );
+  $.ajax({
+    type: 'GET',
+    url: '/transactions',
+    success: function( result ){
+      result = JSON.parse( result );
+      if( result.transactions.length > 0 && ( last_transaction_id == null || result.transactions[result.transactions.length-1].transactionId != last_transaction_id ) ){
+        var b = ( last_transaction_id == null ? -1 : 0 );
+        for( var i = 0; i < result.transactions.length; i ++ ){
+          var transaction = result.transactions[i];
+
+          if( b == -1 || b >= 1 ){
+            if( last_transaction_id != null ){
+              console.log( 'i = ' + i );
+              //. Add Chain
+              var chain = "<div class='chain'>" + result.transactions[i-1].transactionId + "</div>"
+              $('.slick-track').append( chain );
+            }
+
+            //. Add Inner
+            var div = "<div id='item-for-" + transaction.transactionId + "'>"
+              + "<pre id='pre-for-" + transaction.transactionId + "'>" + JSON.stringify( transaction, null, 2 ) + "</pre>"
+              + "</div>";
+            $('.slick-track').append( div );
+
+            b = 2;
+            last_transaction_id = transaction.transactionId;
+          }
+
+          if( ( b == 0 ) && transaction.transactionId == last_transaction_id ){
+            b = 1;
+          }
+        }
+      }
+
+      if( b == 2 ){
+        $('.transactions').slick({
+          infinite: false,
+          slidesToShow: 3,
+          slidesToScroll: 2,
+          initialSlide: ( result.transactions.length - 2 ) * 2,
+          arrows: true,
+          dots: true
+        });
+      }
+    },
+    error: function( err ){
+      //console.log( err );
+    }
+  });
+  setTimeout( updateTransactions, 10000 );
 }
 
 function getTransaction( transactionId, type ){
@@ -64,8 +116,9 @@ function getTransaction( transactionId, type ){
       result = JSON.parse( result );
 
       var transaction = result.transaction;
-      //delete transaction['$class'];
+      delete transaction['$class'];
       var json = JSON.stringify( transaction, null, 2 );
+      json = '<a href="#" title="' + transaction.body + '" style="text-decoration:none;">' + json + '</a>';
 
       $('#pre-for-' + transaction.transactionId).html( json );
     },
@@ -77,14 +130,19 @@ function getTransaction( transactionId, type ){
 </script>
 <title>Viewer</title>
 <style>
+.chain{
+  background-image: url('./chain.jpg');
+  background-repeat: repeat-x;
+  text-align: center;
+}
 .slick-slide{
-  height: 50%;
+  height: 30%;
 }
 </style>
 </head>
 <body>
 
-<div class="transactions" id="transactions">
+<div id="transactions" class="transactions">
 </div>
 
 </body>
