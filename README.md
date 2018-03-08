@@ -175,4 +175,5 @@ https://github.com/dotnsf/myvc/blob/master/MIT-LICENSE.txt
 
 ## Copyright
 
-2018 K.Kimura @ Juge.Me all rights reserved.
+2018 Monamie and K.Kimura @ Juge.Me all rights reserved.
+
