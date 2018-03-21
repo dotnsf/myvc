@@ -167,6 +167,17 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 - Underconstruction
 
 
+## Confirmed environment
+
+- Docker v.17.12.1
+
+- Docker-Compose v1.12.0
+
+- Node.js v6.11.5
+
+- composer-cli v0.16.3
+
+
 ## Licensing
 
 This code is licensed under MIT.
