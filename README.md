@@ -98,6 +98,13 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
     - `$ node app`
 
+- If you use Cloud Foundry runtime in IBM Cloud, you would ..
+
+    - Generate admin@bcdev-basickit-network.card as Card file, and..
+
+    - Put it into cards/ subfolder in api folder. 
+
+
 ## Set admin Password
 
 - If this is your first time access after deployment of Business Network, you should set password for user "admin", who is privileaged user with role 0, as soon as possible:
