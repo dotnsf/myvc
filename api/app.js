@@ -478,25 +478,31 @@ apiRoutes.post( '/item', function( req, res ){
         var owner = user;
 
         client.getItem( id, item0 => {
-          //. 更新
-          var item1 = {
-            id: id,
-            name: name,
-            type: type,
-            body: body,
-            amount: amount,
-            owner: owner
-          };
-          client.updateItemTx( item1, result => {
-            console.log( 'result(1)=' + JSON.stringify( result, 2, null ) );
-            res.write( JSON.stringify( { status: true, result: result }, 2, null ) );
+          if( item0.owner.toString().endsWith( '#' + user.id + '}' ) ){
+            //. 更新
+            var item1 = {
+              id: id,
+              name: name,
+              type: type,
+              body: body,
+              amount: amount,
+              owner: owner,
+            };
+            client.updateItemTx( item1, result => {
+              console.log( 'result(1)=' + JSON.stringify( result, 2, null ) );
+              res.write( JSON.stringify( { status: true, result: result }, 2, null ) );
+              res.end();
+            }, error => {
+              console.log( error );
+              res.status( 500 );
+              res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+              res.end();
+            });
+          }else{
+            res.status( 400 );
+            res.write( JSON.stringify( { status: false, message: 'Failed to update.' }, 2, null ) );
             res.end();
-          }, error => {
-            console.log( error );
-            res.status( 500 );
-            res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
-            res.end();
-          });
+          }
         }, error => {
           //. 新規作成
           if( id ){
@@ -506,7 +512,8 @@ apiRoutes.post( '/item', function( req, res ){
               type: type,
               body: body,
               amount: amount,
-              owner: owner
+              owner: owner,
+              debtor: owner,
             };
             client.createItemTx( item1, result => {
               console.log( 'result(0)=' + JSON.stringify( result, 2, null ) );
@@ -532,6 +539,105 @@ apiRoutes.post( '/item', function( req, res ){
     });
   }
 });
+
+apiRoutes.post( '/itemForBorrow', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.status( 401 );
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        if( req.body.owner_id ){
+          client.getUser( req.body.owner_id, user0 => {
+            var id = ( req.body.id ? req.body.id : uuid.v1() );
+            var name = ( req.body.name ? req.body.name : '' );
+            var type = ( user.type ? user.type : '' );
+            var body = ( req.body.body ? req.body.body : '' );
+            var amount = ( req.body.amount ? ( typeof( req.body.amount ) == 'number' ? req.body.amount : parseInt( req.body.amount ) ) : 1 );
+            var owner = user0;
+            var debtor = user0;
+
+            client.getItem( id, item0 => {
+              if( item0.debtor.toString().endsWith( '#' + user.id + '}' ) ){
+                //. 更新
+                var item1 = {
+                  id: id,
+                  name: name,
+                  type: type,
+                  body: body,
+                  amount: amount,
+                  owner: owner
+                };
+                client.updateItemTx( item1, result => {
+                  console.log( 'result(1)=' + JSON.stringify( result, 2, null ) );
+                  res.write( JSON.stringify( { status: true, result: result }, 2, null ) );
+                  res.end();
+                }, error => {
+                  console.log( error );
+                  res.status( 500 );
+                  res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                  res.end();
+                });
+              }else{
+                res.status( 400 );
+                res.write( JSON.stringify( { status: false, message: 'Failed to update.' }, 2, null ) );
+                res.end();
+              }
+            }, error => {
+              //. 新規作成
+              if( id ){
+                var item1 = {
+                  id: id,
+                  name: name,
+                  type: type,
+                  body: body,
+                  amount: amount,
+                  owner: owner,
+                  debtor: debtor,
+                };
+                client.createItemTx( item1, result => {
+                  console.log( 'result(0)=' + JSON.stringify( result, 2, null ) );
+                  res.write( JSON.stringify( { status: true, result: result }, 2, null ) );
+                  res.end();
+                }, error => {
+                  res.status( 500 );
+                  res.write( JSON.stringify( { status: false, message: error }, 2, null ) );
+                  res.end();
+                });
+              }else{
+                //. 必須項目が足りない
+                res.status( 400 );
+                res.write( JSON.stringify( { status: false, message: 'Failed to create/update new user.' }, 2, null ) );
+                res.end();
+              }
+            });
+          }, error0 => {
+            res.status( 400 );
+            res.write( JSON.stringify( { status: false, message: 'Failed to find user with id ' + req.body.owner_id }, 2, null ) );
+            res.end();
+          });
+        }else{
+          res.status( 401 );
+          res.write( JSON.stringify( { status: false, message: 'Parameter owner_id required.' }, 2, null ) );
+          res.end();
+        }
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
+
 
 apiRoutes.get( '/items', function( req, res ){
   res.contentType( 'application/json' );
@@ -799,7 +905,8 @@ apiRoutes.post( '/trade', function( req, res ){
               if( item.owner.id == user.id ){
                 var user_id = req.body.user_id;
                 client.getUser( user_id, new_owner => {
-                  client.changeOwnerTx( item, new_owner, result => {
+                  var amount = req.body.amount;
+                  client.changeOwnerTx( item, new_owner, amount, result => {
                     res.write( JSON.stringify( { status: true }, 2, null ) );
                     res.end();
                   }, error => {
@@ -838,6 +945,7 @@ apiRoutes.post( '/trade', function( req, res ){
   }
 });
 
+/*
 apiRoutes.post( '/split', function( req, res ){
   res.contentType( 'application/json' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -902,6 +1010,7 @@ apiRoutes.post( '/split', function( req, res ){
     });
   }
 });
+*/
 
 apiRoutes.post( '/merge', function( req, res ){
   res.contentType( 'application/json' );
@@ -968,6 +1077,65 @@ apiRoutes.post( '/merge', function( req, res ){
 });
 
 
+//. 清算
+apiRoutes.post( '/settle', function( req, res ){
+  res.contentType( 'application/json' );
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if( !token ){
+    res.write( JSON.stringify( { status: false, message: 'No token provided.' }, 2, null ) );
+    res.end();
+  }else{
+    //. トークンをデコード
+    jwt.verify( token, app.get( 'superSecret' ), function( err, user ){
+      if( err ){
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Invalid token.' }, 2, null ) );
+        res.end();
+      }else if( user && user.id ){
+        var item_id = req.body.item_id;
+        if( !item_id ){
+          res.status( 404 );
+          res.write( JSON.stringify( { status: false, message: 'No item_id provided' }, 2, null ) );
+          res.end();
+        }else{
+          client.getItem( item_id, item => {
+            if( item && item.owner ){
+              var debtor = item.debtor;
+
+              if( debtor.id == user.id ){
+                res.status( 401 );
+                res.write( JSON.stringify( { status: false, message: 'Can not settle your own item.' }, 2, null ) );
+                res.end();
+              }else{
+                var amount = item.amount;
+
+                //. 実際の清算処理
+                executeSettle( item );
+                //console.log( 'Settle: ' + debtor.id + ' would pay ' + ammount + ' to ' + user.id );
+
+                res.write( JSON.stringify( { status: true }, 2, null ) );
+                res.end();
+              }
+            }else{
+              res.status( 401 );
+              res.write( JSON.stringify( { status: false, message: 'Invalid item_id.' }, 2, null ) );
+              res.end();
+            }
+          }, error => {
+            res.status( 404 );
+            res.write( JSON.stringify( { status: false, message: 'No item found with id = ' + item_id + '.' }, 2, null ) );
+            res.end();
+          });
+        }
+      }else{
+        res.status( 401 );
+        res.write( JSON.stringify( { status: false, message: 'Valid token is missing.' }, 2, null ) );
+        res.end();
+      }
+    });
+  }
+});
+
 apiRoutes.get( '/userinfo', function( req, res ){
   res.contentType( 'application/json' );
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -1015,4 +1183,11 @@ function compare( a, b ){
   }
 
   return comparison;
+}
+
+//. Settlement
+function executeSettle( item ){
+  console.log( 'Settle (' + item.id + '): ' + item.debtor.id + ' would pay ' + item.ammount + ' to ' + item.owner.id );
+
+    client.deleteItemTx( item.id, result => {}, error => {});
 }

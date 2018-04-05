@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: OreCoin Platform on Hyperledger Fabric API Document
-  version: 0.0.1
+  version: 0.0.3
   title: OreCoin Platform on Hyperledger Fabric REST API
 host: localhost:3001
 basePath: /
@@ -254,6 +254,26 @@ paths:
           description: Access error
         '500':
           description: Server error
+  /api/itemForBorrow:
+    post:
+      tags:
+        - item
+      summary: Create/Update item for rent
+      description: Create new item, or Update existing item information for rent
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/ItemForBorrowRequestToken'
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
   /api/itemsByAttr:
     post:
       tags:
@@ -299,7 +319,7 @@ paths:
       tags:
         - trade
       summary: Change item owner
-      description: Change item owner
+      description: Change item owner. Split item with new owner if needed.
       produces:
         - application/json
       parameters:
@@ -307,26 +327,6 @@ paths:
           in: body
           schema:
             $ref: '#/definitions/TradeRequestToken'
-      responses:
-        '200':
-          description: Success
-        '401':
-          description: Access error
-        '500':
-          description: Server error
-  /api/split:
-    post:
-      tags:
-        - trade
-      summary: Split item with new owner
-      description: Split item with new owner
-      produces:
-        - application/json
-      parameters:
-        - name: body
-          in: body
-          schema:
-            $ref: '#/definitions/SplitRequestToken'
       responses:
         '200':
           description: Success
@@ -347,6 +347,26 @@ paths:
           in: body
           schema:
             $ref: '#/definitions/MergeRequestToken'
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+  /api/settle:
+    post:
+      tags:
+        - trade
+      summary: Settle item
+      description: Settle item.
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/SettleRequestToken'
       responses:
         '200':
           description: Success
@@ -477,6 +497,27 @@ definitions:
       token:
         type: string
         description: token which is retrieved from response of login API.
+  ItemForBorrowRequestToken:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Item ID
+      name:
+        type: string
+        description: Item name
+      body:
+        type: string
+        description: Item body
+      amount:
+        type: integer
+        description: Item amount
+      owner_id:
+        type: string
+        description: User ID for rent
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
   ItemsRequest:
     type: array
     items:
@@ -505,18 +546,6 @@ definitions:
       user_id:
         type: string
         description: User ID for new owner
-      token:
-        type: string
-        description: token which is retrieved from response of login API.
-  SplitRequestToken:
-    type: object
-    properties:
-      item_id:
-        type: string
-        description: Item ID
-      user_id:
-        type: string
-        description: User ID for new owner
       amount:
         type: integer
         description: Split amount from Item
@@ -532,6 +561,15 @@ definitions:
       item2_id:
         type: string
         description: Item2 ID
+      token:
+        type: string
+        description: token which is retrieved from response of login API.
+  SettleRequestToken:
+    type: object
+    properties:
+      item_id:
+        type: string
+        description: Item ID
       token:
         type: string
         description: token which is retrieved from response of login API.

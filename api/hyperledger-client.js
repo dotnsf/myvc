@@ -139,8 +139,10 @@ const HyperledgerClient = function() {
       transaction.type = item.type;
       transaction.body = item.body;
       transaction.amount = item.amount;
+
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
       transaction.owner = factory.newRelationship( NS, 'User', item.owner.id );
+      transaction.debtor = factory.newRelationship( NS, 'User', item.debtor.id );
 
       //console.log( transaction );
 
@@ -165,6 +167,7 @@ const HyperledgerClient = function() {
       transaction.type = item.type;
       transaction.body = item.body;
       transaction.amount = item.amount;
+
       //transaction.owner = item.owner; //. "resource:me.juge.myvc.network.User#" + owner.id;
       transaction.owner = factory.newRelationship( NS, 'User', item.owner.id ); //. "resource:me.juge.myvc.network.User#" + owner.id;
 
@@ -198,7 +201,7 @@ const HyperledgerClient = function() {
   };
 
 
-  vm.changeOwnerTx = (item, user, resolved, rejected) => {
+  vm.changeOwnerTx = (item, user, amount, resolved, rejected) => {
     vm.prepare(() => {
       let factory = vm.businessNetworkDefinition.getFactory();
       let transaction = factory.newTransaction(NS, 'ChangeOwnerTx');
@@ -207,6 +210,7 @@ const HyperledgerClient = function() {
       //transaction.user = user; //. "resource:me.juge.myvc.network.User#" + user.id;
       transaction.item = factory.newRelationship( NS, 'Item', item.id );
       transaction.user = factory.newRelationship( NS, 'User', user.id );
+      transaction.amount = amount;
 
       return vm.businessNetworkConnection.submitTransaction(transaction)
       .then(result => {
@@ -218,6 +222,7 @@ const HyperledgerClient = function() {
     }, rejected);
   };
 
+  /*
   vm.splitOwnerTx = (item, user, amount, resolved, rejected) => {
     vm.prepare(() => {
       let factory = vm.businessNetworkDefinition.getFactory();
@@ -236,6 +241,7 @@ const HyperledgerClient = function() {
       });
     }, rejected);
   };
+  */
 
   vm.mergeItemsTx = (item1, item2, resolved, rejected) => {
     vm.prepare(() => {
@@ -336,6 +342,7 @@ const HyperledgerClient = function() {
       .then(registry => {
         return registry.resolve(id);
       }).then(message => {
+        delete message['debtor'];
         resolved(message);
       }).catch(error => {
         console.log('HyperLedgerClient.getItem(): reject');
@@ -350,7 +357,12 @@ const HyperledgerClient = function() {
       .then(registry => {
         return registry.getAll();
       })
-      .then(items => {
+      .then(items0 => {
+        var items = [];
+        items0.forEach( function( item0 ){
+          delete item0['debtor'];
+          items.push( item0 );
+        });
         resolved(items);
       }).catch(error => {
         console.log('HyperLedgerClient.getAllItems(): reject');
@@ -365,6 +377,7 @@ const HyperledgerClient = function() {
       var items = [];
       items0.forEach( function( item0 ){
         if( item0.id.indexOf( keyword ) > -1 || item0.name.indexOf( keyword ) > -1 || item0.body.indexOf( keyword ) > -1 ){
+          delete item0['debtor'];
           items.push( item0 );
         }
       });
@@ -386,6 +399,7 @@ const HyperledgerClient = function() {
         items.forEach(item => {
           //result.push(serializer.toJSON(item));
           //result.push( { id: item.id, name: item.name, type: item.type, body: item.body, amount: item.amout } );
+          delete item['debtor'];
           result.push(item);
         });
         resolved(result);
