@@ -102,7 +102,7 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
     - Generate admin@bcdev-basickit-network.card as Card file, and..
 
-    - Put it into cards/ subfolder in api folder. 
+    - Put it into cards/ subfolder in api folder.
 
 
 ## Set admin Password
@@ -133,15 +133,21 @@ MyVC supports simple CRUD API for User and Item, and Owner change API for Item a
 
 5. Call **POST /api/item** to create item. You need to specify token from 2.
 
-6. Call **GET /api/items** to view all items. You need to specify token from 2.
+6. Call **POST /api/itemForBorrow** to create item for borrowing. You need to specify token from 2.
 
-7. Call **POST /api/login** to login with owner user of item, and get token
+7. Call **GET /api/items** to view all items. You need to specify token from 2.
 
-8. Call **POST /api/trade** to change owner of item. This API must be called from original owner with token from 7.
+8. Call **POST /api/login** to login with owner user of item, and get token
 
-9. Call **POST /api/queryUsers** to search users with specified keyword and token.
+9. Call **POST /api/trade** to change owner of (splitted)item. This API must be called from original owner with token from 7.
 
-10. Call **POST /api/queryItems** to search items with specified keyword and token.
+10. Call **POST /api/merge** to merge two owned items. This API must be called from original owner with token from 7.
+
+11. Call **POST /api/settle** to settle(payoff) item. This API must be called from original owner with token from 7.
+
+12. Call **POST /api/queryUsers** to search users with specified keyword and token.
+
+13. Call **POST /api/queryItems** to search items with specified keyword and token.
 
 
 ## How to setup sample web application under app/
@@ -194,4 +200,3 @@ https://github.com/dotnsf/myvc/blob/master/MIT-LICENSE.txt
 ## Copyright
 
 2018 Monamie and K.Kimura @ Juge.Me all rights reserved.
-
